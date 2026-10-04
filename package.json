@@ -12,7 +12,8 @@
     "data:index": "tsx scripts/export_index.ts",
     "data:parcoursup": "npm run data:index && python3 scripts/update_parcoursup.py",
     "data:pipeline": "npm run data:index && python3 scripts/export_pipeline.py",
-    "test": "vitest run && python3 -m unittest discover -s scripts/tests"
+    "test": "vitest run && python3 -m unittest discover -s scripts/tests",
+    "e2e": "node scripts/e2e.cjs"
   },
   "dependencies": {
     "leaflet": "^1.9.4",
@@ -27,6 +28,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "playwright": "^1.56.1",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",

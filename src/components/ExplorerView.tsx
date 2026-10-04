@@ -191,8 +191,9 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
         return a.frais_scolarite_annuels - b.frais_scolarite_annuels;
       }
       if (sortBy === 'selectivite') {
-        const tauxA = a.admissions[0]?.taux_acces || 50;
-        const tauxB = b.admissions[0]?.taux_acces || 50;
+        // Sélectivité inconnue triée en dernier
+        const tauxA = a.admissions[0]?.taux_acces ?? 999;
+        const tauxB = b.admissions[0]?.taux_acces ?? 999;
         return tauxA - tauxB;
       }
       return 0;
@@ -581,7 +582,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
                       <div>
                         <span className="block text-[10px] text-slate-400">X & ENS</span>
                         <strong className="font-mono text-xs font-bold text-indigo-700">
-                          {topPrepa?.taux_integration_x_ens || 10}%
+                          {topPrepa?.taux_integration_x_ens != null ? `${topPrepa.taux_integration_x_ens}%` : '—'}
                         </strong>
                       </div>
                       <div>
@@ -602,7 +603,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
                       <div>
                         <span className="block text-[10px] text-slate-400">Insertion 6m</span>
                         <strong className="font-mono text-xs font-bold text-slate-900">
-                          {ecole.insertion?.taux_emploi_6_mois || 98}%
+                          {ecole.insertion?.taux_emploi_6_mois ? `${ecole.insertion.taux_emploi_6_mois}%` : '—'}
                         </strong>
                       </div>
                       <div>

@@ -20,3 +20,16 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+
+      # Contrôle navigateur du build (routes, recherche, comparateur, mobile, erreurs console…)
+      - run: npx playwright install --with-deps chromium
+      - name: Tests navigateur
+        run: |
+          npx vite preview --port 4175 --strictPort &
+          npx --yes wait-on@8 -t 60000 http://localhost:4175/
+          BASE=http://localhost:4175/ SHOTS=shots npm run e2e
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: captures-e2e
+          path: shots/

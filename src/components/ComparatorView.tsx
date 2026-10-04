@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { 
   Scale, X, Plus, ShieldCheck, Check, GraduationCap, BookOpen, 
-  ExternalLink, BedDouble, Link2 
+  ExternalLink, BedDouble, Link2, Download 
 } from 'lucide-react';
 import { Ecole } from '../types';
-import { tabHref } from '../utils/router';
+import { tabHref, useSearchParamState } from '../utils/router';
+import { comparisonRows, downloadCsv, toCsv } from '../utils/csv';
 
 interface ComparatorViewProps {
   schools: Ecole[];
@@ -32,7 +33,8 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
   onSelectSchoolForPage,
 }) => {
   // STRICT SEPARATION: compare Écoles with Écoles OR Prépas with Prépas!
-  const [activeMode, setActiveMode] = useState<'ecoles' | 'prepas'>('ecoles');
+  // Mode dans l'URL (?mode=prepas) : « Comparer avec… » depuis une fiche prépa ouvre le bon onglet
+  const [activeMode, setActiveMode] = useSearchParamState<'ecoles' | 'prepas'>('mode', 'ecoles');
   const [selectorOpen, setSelectorOpen] = useState(false);
   const [selectorSearch, setSelectorSearch] = useState('');
   const [linkCopied, setLinkCopied] = useState(false);
@@ -142,6 +144,15 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
               <span aria-live="polite">{linkCopied ? 'Lien copié !' : 'Copier le lien'}</span>
             </button>
           )}
+          {activeComparedList.length > 0 && (
+            <button
+              onClick={() => downloadCsv(`comparaison-${activeMode}.csv`, toCsv(comparisonRows(activeComparedList, activeMode)))}
+              className="inline-flex items-center gap-1 text-slate-600 hover:text-slate-900 font-semibold"
+            >
+              <Download className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>CSV</span>
+            </button>
+          )}
         </div>
 
         {activeComparedList.length < 4 && (
@@ -224,8 +235,12 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
       ) : (
         /* 4. Complete Comparison Matrix (Strictly Specialized) */
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+          {activeComparedList.length > 1 && (
+            <p className="sm:hidden px-3 pt-2 text-[11px] text-slate-500">Faites glisser horizontalement pour passer d'un établissement à l'autre.</p>
+          )}
+          {/* Mobile : 1re colonne fixe, une colonne d'établissement par écran avec défilement aimanté (index.css) */}
+          <div className="overflow-x-auto compare-scroll">
+            <table className="w-full text-left text-xs border-collapse compare-table">
               
               {/* Header Row: Names & Remove Buttons */}
               <thead>

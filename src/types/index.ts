@@ -173,10 +173,10 @@ export interface MatchingPreferences {
 export interface ScoredEcole {
   ecole: Ecole;
   scoreMatch: number;
-  scorePrestige: number;
-  scoreSalaire: number;
+  scorePrestige: number | null; // null : donnée non communiquée
+  scoreSalaire: number | null;
   scoreBudget: number;
-  scoreInsertion: number;
+  scoreInsertion: number | null;
   scoreDomaine: number;
   bonusAlternance: number;
   pointsForts: string[];

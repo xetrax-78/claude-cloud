@@ -11,12 +11,14 @@ export const WISH_CATEGORY_LABELS: Record<WishCategory, string> = {
 export const parcoursupStat = (ecole: Ecole) =>
   ecole.admissions.find(a => a.source === 'Parcoursup') || ecole.admissions[0];
 
-// Seuils : taux d'accès < 15 % ou top 8 = ambitieux ; ≤ 32 % ou top 28 = cible ; sinon sécurité
-export function classifyWish(ecole: Ecole): WishCategory {
-  const taux = parcoursupStat(ecole)?.taux_acces ?? 25;
-  const rang = ecole.classements[0]?.rang_general ?? 40;
-  if (taux < 15 || rang <= 8) return 'ambitieux';
-  if (taux <= 32 || rang <= 28) return 'cible';
+// Seuils : taux d'accès < 15 % ou top 8 = ambitieux ; ≤ 32 % ou top 28 = cible ; sinon sécurité.
+// Ni taux ni rang connus : null (non classé, plutôt qu'une catégorie devinée)
+export function classifyWish(ecole: Ecole): WishCategory | null {
+  const taux = parcoursupStat(ecole)?.taux_acces;
+  const rang = ecole.classements[0]?.rang_general;
+  if (taux == null && rang == null) return null;
+  if ((taux != null && taux < 15) || (rang != null && rang <= 8)) return 'ambitieux';
+  if ((taux != null && taux <= 32) || (rang != null && rang <= 28)) return 'cible';
   return 'securite';
 }
 
@@ -25,6 +27,7 @@ export interface WishlistAnalysis {
   ambitieux: number;
   cibles: number;
   securite: number;
+  nonClasses: number;
   scoreSecurite: number;
   diagnostic: string;
   statusColor: string;
@@ -36,9 +39,9 @@ export function analyzeWishlist(schools: Ecole[], wishlistIds: string[]): Wishli
   const wishlistSchools = wishlistIds
     .map(id => schools.find(s => s.id === id))
     .filter((s): s is Ecole => Boolean(s));
-  const counts = { ambitieux: 0, cible: 0, securite: 0 };
-  wishlistSchools.forEach(s => { counts[classifyWish(s)]++; });
-  const { ambitieux, cible: cibles, securite } = counts;
+  const counts = { ambitieux: 0, cible: 0, securite: 0, inconnu: 0 };
+  wishlistSchools.forEach(s => { counts[classifyWish(s) ?? 'inconnu']++; });
+  const { ambitieux, cible: cibles, securite, inconnu: nonClasses } = counts;
   const total = wishlistSchools.length;
 
   let scoreSecurite: number;
@@ -58,12 +61,16 @@ export function analyzeWishlist(schools: Ecole[], wishlistIds: string[]): Wishli
     diagnostic = '⚠️ Trop de vœux ultra-sélectifs (< 15%). Rééquilibrez avec des formations cibles pour maximiser vos chances.';
     statusColor = 'text-rose-800 bg-rose-50 border-rose-200';
   } else {
-    scoreSecurite = Math.min(100, Math.round((securite * 25 + cibles * 15 + ambitieux * 10) / total * 5));
+    const classes = total - nonClasses;
+    scoreSecurite = classes ? Math.min(100, Math.round((securite * 25 + cibles * 15 + ambitieux * 10) / classes * 5)) : 0;
     diagnostic = '✅ Liste équilibrée entre vœux ambitieux, cibles et de sécurité.';
     statusColor = 'text-emerald-800 bg-emerald-50 border-emerald-200';
   }
+  if (nonClasses > 0) {
+    diagnostic += ` ${nonClasses} vœu(x) sans taux d'accès ni classement connus : non pris en compte.`;
+  }
 
-  return { total, ambitieux, cibles, securite, scoreSecurite, diagnostic, statusColor, schools: wishlistSchools };
+  return { total, ambitieux, cibles, securite, nonClasses, scoreSecurite, diagnostic, statusColor, schools: wishlistSchools };
 }
 
 const esc = (s: string | number) =>
@@ -78,7 +85,7 @@ export function wishlistPrintHtml(analysis: WishlistAnalysis, date = new Date())
       <td><strong>${esc(s.nom_officiel)}</strong>${s.sigle ? ` (${esc(s.sigle)})` : ''}<br><small>${esc(s.ville_principale)}</small></td>
       <td>${esc(psup?.nom_filiere_concours ?? '—')}</td>
       <td>${taux}${psup ? `<br><small>${esc(psup.source)} ${psup.annee}</small>` : ''}</td>
-      <td>${WISH_CATEGORY_LABELS[classifyWish(s)]}</td>
+      <td>${(() => { const c = classifyWish(s); return c ? WISH_CATEGORY_LABELS[c] : 'Non classé'; })()}</td>
     </tr>`;
   }).join('');
 

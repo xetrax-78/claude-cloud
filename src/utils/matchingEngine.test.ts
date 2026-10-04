@@ -33,6 +33,20 @@ describe('runMatchingAlgorithm', () => {
     expect(runMatchingAlgorithm([lyon, riche], prefs({ salaireMin: 50 })).map(r => r.ecole.id)).toEqual(['riche']);
   });
 
+  it('salaire inconnu : exclu du filtre salaire minimum et critère ignoré dans le score', () => {
+    const sansDonnees = makeEcole({ id: 'nd', insertion: { id: 'i', ecole_id: 'nd', annee_promo: 2024, salaire_moyen_embauche: 0, taux_emploi_6_mois: 0 } });
+    expect(runMatchingAlgorithm([sansDonnees], prefs({ salaireMin: 30 }))).toHaveLength(0);
+    const [r] = runMatchingAlgorithm([sansDonnees, lyon], prefs()).filter(x => x.ecole.id === 'nd');
+    expect(r.scoreSalaire).toBeNull();
+    expect(r.scoreInsertion).toBeNull();
+    expect(r.scorePrestige).toBeNull();
+    expect(r.pointsVigilance.join(' ')).toMatch(/Non communiqué/);
+  });
+
+  it('taux d’accès inconnu : exclu du filtre de sélectivité', () => {
+    expect(runMatchingAlgorithm([lyon], prefs({ tauxAccesMax: 50 }))).toHaveLength(0);
+  });
+
   it('signale le dépassement de budget', () => {
     const [r] = runMatchingAlgorithm([prive], prefs({ budgetMax: 5000 }));
     expect(r.pointsVigilance.join(' ')).toMatch(/Dépasse votre budget/);
@@ -47,6 +61,11 @@ describe('runMatchingAlgorithm', () => {
 });
 
 describe('getSelectivityTiers', () => {
+  it('écarte les écoles sans sélectivité ni classement connus', () => {
+    const tiers = getSelectivityTiers([makeEcole({ id: 'x' })]);
+    expect(tiers.flatMap(t => t.schools)).toHaveLength(0);
+  });
+
   it('répartit chaque école dans exactement un groupe', () => {
     const schools = [10, 25, 60].map((t, i) => makeEcole({ id: `s${i}`, admissions: [psup(`s${i}`, t)] }));
     const tiers = getSelectivityTiers(schools);

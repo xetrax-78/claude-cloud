@@ -7,6 +7,8 @@ import {
 import { Ecole, ClassementMedia } from '../types';
 import { SourceTag, SOURCE_URLS, NON_COMMUNIQUE } from './SourceTag';
 import { explorerHref, tabHref } from '../utils/router';
+import { findSimilar } from '../utils/similarity';
+import { CountryAdmissionInfo } from './CountryAdmissionInfo';
 
 interface SchoolDetailPageProps {
   ecole: Ecole;
@@ -14,6 +16,7 @@ interface SchoolDetailPageProps {
   onToggleCompare: (ecole: Ecole) => void;
   isCompared: boolean;
   onSelectOtherSchool?: (ecole: Ecole) => void;
+  onCompareWith?: (other: Ecole) => void;
   allSchools: Ecole[];
 }
 
@@ -23,6 +26,7 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
   onToggleCompare,
   isCompared,
   onSelectOtherSchool,
+  onCompareWith,
   allSchools
 }) => {
   const isPrepa = ecole.type_etablissement === 'prepa_cpge';
@@ -83,10 +87,9 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
     }
   ];
 
-  // Similar establishments within the exact same category
-  const similarSchools = allSchools
-    .filter(s => s.id !== ecole.id && (isPrepa ? s.type_etablissement === 'prepa_cpge' : s.type_etablissement !== 'prepa_cpge'))
-    .slice(0, 3);
+  // Établissements proches (spécialités, modèle de recrutement, région) — et liste pour « Comparer avec… »
+  const similarSchools = findSimilar(ecole, allSchools, 3);
+  const compareCandidates = findSimilar(ecole, allSchools, allSchools.length);
 
   // Helper to format scores strictly according to official media scales
   const formatMediaScore = (cl: ClassementMedia) => {
@@ -159,6 +162,27 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
             {isCompared ? <Check className="w-3.5 h-3.5 text-indigo-600" /> : <Plus className="w-3.5 h-3.5" />}
             <span>{isCompared ? 'En sélection' : 'Comparer'}</span>
           </button>
+
+          {onCompareWith && (
+            <select
+              aria-label="Comparer avec un autre établissement"
+              value=""
+              onChange={(e) => {
+                const other = allSchools.find(s => s.id === e.target.value);
+                if (other) onCompareWith(other);
+              }}
+              className="max-w-44 px-2 py-1.5 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700"
+            >
+              <option value="">Comparer avec…</option>
+              <optgroup label="Les plus proches">
+                {compareCandidates.slice(0, 5).map(s => <option key={s.id} value={s.id}>{s.sigle || s.nom_officiel}</option>)}
+              </optgroup>
+              <optgroup label="Tous">
+                {[...compareCandidates].sort((a, b) => a.nom_officiel.localeCompare(b.nom_officiel, 'fr'))
+                  .map(s => <option key={s.id} value={s.id}>{s.nom_officiel}</option>)}
+              </optgroup>
+            </select>
+          )}
 
           {/* Official Admissions Portal Button */}
           {isPostPrepa ? (
@@ -278,7 +302,7 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
 
           <div className="p-3 bg-slate-50 rounded-lg">
             <span className="block text-[10px] text-slate-400 font-medium">
-              {isPrepa ? 'Sélectivité Parcoursup' : isPostPrepa ? 'Sélectivité Concours CPGE' : 'Sélectivité Parcoursup'}
+              {isPostPrepa ? 'Sélectivité Concours CPGE' : isInternational ? "Taux d'admission" : 'Sélectivité Parcoursup'}
             </span>
             <strong className="font-mono text-base font-bold text-indigo-700">
               {primaryAdmission?.taux_acces != null ? `${primaryAdmission.taux_acces}%` : NON_COMMUNIQUE}
@@ -300,6 +324,8 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
         </div>
 
       </section>
+
+      <CountryAdmissionInfo ecole={ecole} />
 
       {/* 3. Diagrammes & Statistiques */}
       <section className="space-y-4">
@@ -339,7 +365,7 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs">
                 <span className="text-slate-600">
-                  {isPostPrepa ? 'Taux d\'admission concours :' : 'Taux d\'accès Parcoursup :'}
+                  {isPostPrepa ? 'Taux d\'admission concours :' : isInternational ? 'Taux d\'admission :' : 'Taux d\'accès Parcoursup :'}
                 </span>
                 <span className="font-mono font-bold text-slate-900">
                   {primaryAdmission?.taux_acces != null ? `${primaryAdmission.taux_acces}%` : NON_COMMUNIQUE}

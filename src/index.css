@@ -7,6 +7,21 @@
   --color-slate-500: oklch(44.6% 0.043 257.281);
 }
 
+/* Comparateur mobile : critères figés à gauche, un établissement par écran, défilement aimanté */
+@media (max-width: 639px) {
+  .compare-scroll { scroll-snap-type: x mandatory; scroll-padding-left: 7.5rem; }
+  .compare-table { width: max-content; min-width: 100%; }
+  .compare-table :is(th, td):first-child {
+    position: sticky; left: 0; z-index: 1;
+    width: 7.5rem; min-width: 7.5rem; max-width: 7.5rem;
+    background: var(--color-white); box-shadow: 1px 0 0 var(--color-slate-200);
+  }
+  .compare-table :is(th, td):not(:first-child) {
+    width: calc(100vw - 2rem - 7.5rem - 2px); min-width: calc(100vw - 2rem - 7.5rem - 2px);
+    scroll-snap-align: start;
+  }
+}
+
 /* Mobile : aucune taille de texte sous 12 px */
 @media (max-width: 639px) {
   .text-\[10px\], .text-\[11px\] { font-size: 12px; }

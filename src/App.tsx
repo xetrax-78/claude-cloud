@@ -15,6 +15,8 @@ const SchoolDetailPage = lazy(() => import('./components/SchoolDetailPage').then
 
 const MAX_COMPARED = 4;
 
+const formatDate = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
 const Loading = () => (
   <div role="status" className="py-24 text-center text-sm text-slate-500">Chargement…</div>
 );
@@ -22,6 +24,7 @@ const Loading = () => (
 export default function App() {
   const route = useRoute();
   const [schools, setSchools] = useState<Ecole[] | null>(null);
+  const [updatedAt, setUpdatedAt] = useState<{ parcoursup: string | null; pipeline: string | null } | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -40,7 +43,7 @@ export default function App() {
 
   useEffect(() => {
     import('./data')
-      .then(m => setSchools(m.ALL_ESTABLISHMENTS))
+      .then(m => { setSchools(m.ALL_ESTABLISHMENTS); setUpdatedAt(m.DATA_UPDATED_AT); })
       .catch((err) => { if (!reloadOnceForChunkError(err)) setLoadError(true); });
   }, []);
 
@@ -80,6 +83,16 @@ export default function App() {
 
   const openSchool = (ecole: Ecole) => navigate(schoolHref(ecole.id));
 
+  // « Comparer avec… » : ajoute les deux établissements (sans dépasser 4) puis ouvre le comparateur
+  const compareWith = (current: Ecole, other: Ecole) => {
+    const setIds = current.type_etablissement === 'prepa_cpge' ? setComparedPrepaIds : setComparedSchoolIds;
+    setIds(ids => {
+      const rest = ids.filter(id => id !== current.id && id !== other.id);
+      return [current.id, other.id, ...rest].slice(0, MAX_COMPARED);
+    });
+    navigate(tabHref('comparator', current.type_etablissement === 'prepa_cpge' ? 'mode=prepas' : ''));
+  };
+
   const isCurrentPageCompared = selectedSchool
     ? (selectedSchool.type_etablissement === 'prepa_cpge'
         ? comparedPrepaIds.includes(selectedSchool.id)
@@ -113,6 +126,7 @@ export default function App() {
             onToggleCompare={handleToggleCompare}
             isCompared={isCurrentPageCompared}
             onSelectOtherSchool={openSchool}
+            onCompareWith={(other) => compareWith(selectedSchool, other)}
             allSchools={data}
           />
         ) : (
@@ -191,6 +205,12 @@ export default function App() {
             </nav>
           </div>
 
+          {updatedAt && (updatedAt.parcoursup || updatedAt.pipeline) && (
+            <p className="text-[11px] text-slate-500 text-center sm:text-left">
+              {updatedAt.parcoursup && <>Statistiques Parcoursup mises à jour le {formatDate(updatedAt.parcoursup)}. </>}
+              {updatedAt.pipeline && <>Classements et insertion mis à jour le {formatDate(updatedAt.pipeline)}.</>}
+            </p>
+          )}
           <p className="text-[11px] leading-relaxed text-slate-400 text-center sm:text-left">
             Données indicatives (sessions 2024–2025) compilées à partir de Parcoursup, du SCEI, des enquêtes d'insertion
             et des palmarès presse (Le Figaro Étudiant, L'Étudiant, L'Usine Nouvelle). Vérifiez toujours les chiffres

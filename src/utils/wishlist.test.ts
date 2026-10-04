@@ -16,6 +16,10 @@ describe('classifyWish', () => {
     expect(classifyWish(ecole('c', 60))).toBe('securite');
   });
 
+  it('sans taux ni rang : non classé (aucune catégorie devinée)', () => {
+    expect(classifyWish(makeEcole({ id: 'z' }))).toBeNull();
+  });
+
   it('un rang national élevé rend le vœu ambitieux quel que soit le taux', () => {
     expect(classifyWish(ecole('d', 60, 3))).toBe('ambitieux');
     expect(classifyWish(ecole('e', 60, 20))).toBe('cible');
@@ -43,6 +47,13 @@ describe('analyzeWishlist', () => {
     expect([r.ambitieux, r.cibles, r.securite]).toEqual([1, 1, 2]);
     expect(r.schools.map(s => s.id)).toEqual(['d', 'a', 'b', 'c']);
     expect(r.diagnostic).toMatch(/équilibrée/);
+  });
+
+  it('signale les vœux non classés sans les compter', () => {
+    const r = analyzeWishlist([...schools, makeEcole({ id: 'inconnu' })], ['c', 'd', 'inconnu']);
+    expect(r.nonClasses).toBe(1);
+    expect(r.securite).toBe(2);
+    expect(r.diagnostic).toMatch(/non pris en compte/);
   });
 
   it('ignore les identifiants inconnus', () => {

@@ -20,3 +20,9 @@ export const ALL_ESTABLISHMENTS: Ecole[] = applyUpdates(
   parcoursupUpdates as unknown as ParcoursupUpdatesFile,
   pipelineUpdates as unknown as PipelineUpdatesFile
 );
+
+// Dates de génération des mises à jour (null tant que les scripts n'ont pas tourné)
+export const DATA_UPDATED_AT = {
+  parcoursup: (parcoursupUpdates as { generated_at: string | null }).generated_at,
+  pipeline: (pipelineUpdates as { generated_at: string | null }).generated_at,
+};

@@ -8,7 +8,7 @@ Plateforme d'orientation vers les écoles d'ingénieurs (France, Suisse, Belgiqu
 npm install
 npm run dev      # http://localhost:3000
 npm run lint     # vérification TypeScript
-npm test         # tests front (Vitest) + scripts Python (unittest)
+npm test         # tests front (Vitest) + validation des données + scripts Python (unittest)
 npm run build    # dist/ : SPA + une page HTML pré-rendue par route
 ```
 
@@ -28,7 +28,17 @@ Les anciens liens `#/…` sont redirigés automatiquement. Pour un site servi da
 
 Le workflow `.github/workflows/pages.yml` publie le site sur `https://<compte>.github.io/<repo>/` à chaque push sur `main` (ou à la demande depuis l'onglet Actions). À activer une fois : **Settings → Pages → Source : GitHub Actions**.
 
-Le workflow `.github/workflows/ci.yml` vérifie TypeScript, les tests et le build sur chaque push et pull request.
+Le workflow `.github/workflows/ci.yml` vérifie TypeScript, les tests, le build et lance les tests navigateur (`scripts/e2e.cjs`) sur chaque push et pull request.
+
+### Application installable et mesure d'audience
+
+Le site s'installe sur l'écran d'accueil (manifeste + service worker) et reste consultable hors ligne après une première visite.
+
+Mesure d'audience sans cookies (Plausible), désactivée par défaut :
+
+```bash
+VITE_PLAUSIBLE_DOMAIN=mon-domaine.fr npm run build   # VITE_PLAUSIBLE_SRC pour une instance auto-hébergée
+```
 
 ## Données
 
