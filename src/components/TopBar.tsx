@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, GraduationCap, Scale, BarChart3, Moon, Sun, LucideIcon } from 'lucide-react';
+import { Compass, GraduationCap, Scale, BarChart3, Moon, Sun, Search, LucideIcon } from 'lucide-react';
 import { tabHref } from '../utils/router';
 import { useTheme } from '../utils/theme';
 
@@ -9,6 +9,7 @@ interface TopBarProps {
   activeTab: ActiveTab;
   selectedSchoolsCount: number;
   totalEstablishments?: number;
+  onOpenSearch: () => void;
 }
 
 const NAV_ITEMS: { tab: ActiveTab; label: string; shortLabel: string; icon: LucideIcon }[] = [
@@ -22,6 +23,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   activeTab,
   selectedSchoolsCount,
   totalEstablishments,
+  onOpenSearch,
 }) => {
   const { theme, toggle } = useTheme();
 
@@ -33,6 +35,19 @@ export const TopBar: React.FC<TopBarProps> = ({
       className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
     >
       {theme === 'dark' ? <Sun className="w-4 h-4" aria-hidden="true" /> : <Moon className="w-4 h-4" aria-hidden="true" />}
+    </button>
+  );
+
+  const searchButton = (
+    <button
+      onClick={onOpenSearch}
+      aria-label="Rechercher"
+      aria-keyshortcuts="Control+K"
+      className="flex items-center gap-2 p-2 lg:pl-3 lg:pr-2 lg:py-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 lg:border lg:border-slate-200 transition-colors"
+    >
+      <Search className="w-4 h-4" aria-hidden="true" />
+      <span className="hidden lg:inline text-sm">Rechercher</span>
+      <kbd aria-hidden="true" className="hidden lg:inline text-[10px] font-mono text-slate-400 border border-slate-200 rounded px-1">Ctrl K</kbd>
     </button>
   );
 
@@ -56,8 +71,8 @@ export const TopBar: React.FC<TopBarProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
         {/* Wordmark */}
-        <a href={tabHref('boussole')} className="flex items-center gap-2.5 text-left group" aria-label="IngéFinder — accueil">
-          <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-xs tracking-tight transition-transform group-hover:scale-105">
+        <a href={tabHref('boussole')} className="flex items-center gap-2.5 text-left group">
+          <div aria-hidden="true" className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-xs tracking-tight transition-transform group-hover:scale-105">
             IF
           </div>
           <span className="text-base font-bold tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
@@ -67,7 +82,7 @@ export const TopBar: React.FC<TopBarProps> = ({
 
         {/* Navigation desktop */}
         <nav aria-label="Navigation principale" className="hidden sm:flex items-center gap-2">
-          {NAV_ITEMS.map(({ tab, label, icon: Icon }) => (
+          {NAV_ITEMS.map(({ tab, label, shortLabel, icon: Icon }) => (
             <a
               key={tab}
               href={tabHref(tab)}
@@ -79,13 +94,15 @@ export const TopBar: React.FC<TopBarProps> = ({
               }`}
             >
               <Icon className={`w-4 h-4 ${tab === 'boussole' ? 'text-indigo-600' : 'text-slate-500'}`} aria-hidden="true" />
-              <span>{label}</span>
+              <span className="lg:hidden">{shortLabel}</span>
+              <span className="hidden lg:inline">{label}</span>
               {badge(tab)}
             </a>
           ))}
+          {searchButton}
           {themeButton}
         </nav>
-        <div className="sm:hidden">{themeButton}</div>
+        <div className="sm:hidden flex items-center">{searchButton}{themeButton}</div>
       </div>
     </header>
 

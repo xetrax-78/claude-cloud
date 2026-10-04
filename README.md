@@ -1,6 +1,6 @@
 # IngéFinder Francophonie
 
-Plateforme d'orientation vers les écoles d'ingénieurs (France, Suisse, Belgique, Québec) et les prépas scientifiques CPGE : répertoire avec carte des campus, fiches détaillées, comparateur partageable, liste de vœux Parcoursup exportable en PDF, recherche multicritère, thème clair/sombre.
+Plateforme d'orientation vers les écoles d'ingénieurs (France, Suisse, Belgique, Québec) et les prépas scientifiques CPGE : répertoire filtrable avec carte des campus, recherche globale (Ctrl+K), fiches détaillées, comparateur partageable, liste de vœux Parcoursup exportable en PDF, recherche multicritère, thème clair/sombre.
 
 ## Front (React + Vite + Tailwind)
 
@@ -22,7 +22,13 @@ Pour le référencement, indiquez l'adresse publique au build :
 SITE_URL=https://mon-domaine.fr npm run build   # ajoute canonical, sitemap.xml et robots.txt
 ```
 
-Les anciens liens `#/…` sont redirigés automatiquement.
+Les anciens liens `#/…` sont redirigés automatiquement. Pour un site servi dans un sous-dossier : `BASE_PATH=/sous-dossier/ npm run build`.
+
+### GitHub Pages
+
+Le workflow `.github/workflows/pages.yml` publie le site sur `https://<compte>.github.io/<repo>/` à chaque push sur `main` (ou à la demande depuis l'onglet Actions). À activer une fois : **Settings → Pages → Source : GitHub Actions**.
+
+Le workflow `.github/workflows/ci.yml` vérifie TypeScript, les tests et le build sur chaque push et pull request.
 
 ## Données
 

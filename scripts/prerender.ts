@@ -4,14 +4,18 @@
  * JSON-LD et un résumé lisible sans JavaScript. React remplace ce contenu au chargement.
  *
  * SITE_URL=https://mon-domaine.fr npm run build  → ajoute canonical, sitemap.xml et robots.txt
+ * BASE_PATH=/sous-dossier/ npm run build          → site servi dans un sous-dossier (ex. GitHub Pages)
  */
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { ALL_ESTABLISHMENTS } from '../src/data';
 import type { Ecole } from '../src/types';
 
 const DIST = join(import.meta.dirname, '..', 'dist');
 const SITE_URL = (process.env.SITE_URL ?? '').replace(/\/$/, '');
+const BASE = (process.env.BASE_PATH ?? '/').replace(/\/?$/, '/');
+// Lien interne préfixé par le chemin de base ; `path` reste relatif à la racine de dist/
+const link = (path: string) => BASE + path.replace(/^\//, '');
 const template = readFileSync(join(DIST, 'index.html'), 'utf-8');
 
 const esc = (s: string) =>
@@ -24,8 +28,17 @@ interface Page {
   description: string;
   body: string;
   jsonLd?: object;
+  breadcrumb?: [name: string, path: string][];
   noindex?: boolean;
+  head?: string;
 }
+
+// Fil d'Ariane pour les moteurs de recherche (URLs absolues : seulement si SITE_URL est défini)
+const breadcrumbLd = (items: [string, string][]) => ({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map(([name, path], i) => ({ '@type': 'ListItem', position: i + 1, name, item: `${SITE_URL}${path}` })),
+});
 
 function render(page: Page): string {
   const canonical = SITE_URL ? `${SITE_URL}${page.path}` : '';
@@ -37,7 +50,10 @@ function render(page: Page): string {
     canonical && `<link rel="canonical" href="${canonical}" />`,
     canonical && `<meta property="og:url" content="${canonical}" />`,
     page.noindex && `<meta name="robots" content="noindex" />`,
-    page.jsonLd && `<script type="application/ld+json">${JSON.stringify(page.jsonLd).replace(/</g, '\\u003c')}</script>`,
+    page.head,
+    ...[page.jsonLd, page.breadcrumb && SITE_URL && breadcrumbLd(page.breadcrumb)]
+      .filter(Boolean)
+      .map(ld => `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>`),
   ].filter(Boolean).join('\n    ');
 
   return template
@@ -56,9 +72,18 @@ function write(path: string, html: string) {
 }
 
 const wrap = (inner: string) =>
-  `<div style="max-width:72rem;margin:0 auto;padding:2rem 1rem;font-family:system-ui,sans-serif;line-height:1.5">${inner}</div>`;
+  `<div data-prerender style="max-width:72rem;margin:0 auto;padding:2rem 1rem;font-family:system-ui,sans-serif;line-height:1.5">${inner}</div>`;
 
-const nav = `<nav><a href="/">Boussole</a> · <a href="/repertoire/">Répertoire</a> · <a href="/comparateur/">Comparateur</a> · <a href="/analytique/">Analytique</a></nav>`;
+const nav = `<nav><a href="${link('/')}">Boussole</a> · <a href="${link('/repertoire/')}">Répertoire</a> · <a href="${link('/comparateur/')}">Comparateur</a> · <a href="${link('/analytique/')}">Analytique</a></nav>`;
+
+// Image hero de l'accueil : préchargée pour ne pas attendre le JavaScript (meilleur LCP)
+function heroPreload() {
+  const assets = readdirSync(join(DIST, 'assets'));
+  const small = assets.find(f => /^hero-campus-768-.*\.webp$/.test(f));
+  const large = assets.find(f => /^hero-campus-(?!768).*\.webp$/.test(f));
+  if (!small || !large) return undefined;
+  return `<link rel="preload" as="image" fetchpriority="high" imagesrcset="${BASE}assets/${small} 768w, ${BASE}assets/${large} 1376w" imagesizes="(min-width: 1024px) 42vw, 100vw" />`;
+}
 
 const isPrepa = (e: Ecole) => e.type_etablissement === 'prepa_cpge';
 const ecoles = ALL_ESTABLISHMENTS.filter(e => !isPrepa(e));
@@ -77,6 +102,11 @@ function schoolPage(e: Ecole): Page {
 
   return {
     path: `/ecole/${encodeURIComponent(e.id)}/`,
+    breadcrumb: [
+      ['Accueil', '/'],
+      [isPrepa(e) ? 'Prépas CPGE' : "Écoles d'ingénieurs", isPrepa(e) ? '/repertoire/?type=prepas' : '/repertoire/'],
+      [e.nom_officiel, `/ecole/${encodeURIComponent(e.id)}/`],
+    ],
     title: `${e.sigle ? `${e.sigle} — ` : ''}${e.nom_officiel} | IngéFinder`,
     description: clip(`${kind} à ${e.ville_principale}. ${e.description}`),
     body: wrap(`${nav}<h1>${esc(e.nom_officiel)}</h1><p>${esc(e.description)}</p><ul>${facts.map(f => `<li>${esc(f)}</li>`).join('')}</ul><p><a href="${esc(e.site_web)}" rel="noopener">Site de l'établissement</a></p>`),
@@ -95,7 +125,7 @@ function schoolPage(e: Ecole): Page {
 
 const listBody = (title: string, items: Ecole[]) =>
   `<h2>${esc(title)} (${items.length})</h2><ul>${items
-    .map(e => `<li><a href="/ecole/${encodeURIComponent(e.id)}/">${esc(e.nom_officiel)}</a> — ${esc(e.ville_principale)}</li>`)
+    .map(e => `<li><a href="${link(`/ecole/${encodeURIComponent(e.id)}/`)}">${esc(e.nom_officiel)}</a> — ${esc(e.ville_principale)}</li>`)
     .join('')}</ul>`;
 
 const pages: Page[] = [
@@ -104,6 +134,7 @@ const pages: Page[] = [
     title: "IngéFinder — Écoles d'ingénieurs & prépas CPGE",
     description: `Comparez ${ecoles.length} écoles d'ingénieurs (France, Suisse, Belgique, Québec) et ${prepas.length} prépas scientifiques : admissions, salaires, spécialités, classements et vœux Parcoursup.`,
     body: wrap(`${nav}<h1>Trouvez votre école d'ingénieurs et préparez vos vœux.</h1>${listBody("Écoles d'ingénieurs", ecoles)}`),
+    head: heroPreload(),
     jsonLd: { '@context': 'https://schema.org', '@type': 'WebSite', name: 'IngéFinder', ...(SITE_URL && { url: `${SITE_URL}/` }) },
   },
   {
@@ -138,13 +169,14 @@ write('404.html', render({
   noindex: true,
 }));
 
+writeFileSync(join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\n${SITE_URL ? `Sitemap: ${SITE_URL}/sitemap.xml\n` : ''}`);
+
 if (SITE_URL) {
   const today = new Date().toISOString().slice(0, 10);
   writeFileSync(join(DIST, 'sitemap.xml'),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages
       .map(p => `  <url><loc>${SITE_URL}${p.path}</loc><lastmod>${today}</lastmod></url>`)
       .join('\n')}\n</urlset>\n`);
-  writeFileSync(join(DIST, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 }
 
 console.log(`Pré-rendu : ${pages.length} pages${SITE_URL ? ` + sitemap (${SITE_URL})` : ' (définir SITE_URL pour le sitemap)'}`);

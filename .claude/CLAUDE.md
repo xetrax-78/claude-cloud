@@ -9,6 +9,11 @@ SPA React 19 + Vite 8 + Tailwind 4 (front), scripts Python stdlib (données), pi
 
 ## Architecture front
 - `src/App.tsx` : routage par chemin (`src/utils/router.ts`, History API + interception des clics sur `<a>`), vues et données chargées à la demande.
+- Filtres du répertoire dans l'URL via `useSearchParamState` (q, region, statut, domaine, modele, filiere, internat, tri, vue).
+- Cartes du répertoire : lien étiré (`after:absolute after:inset-0`) sur le titre ; boutons internes en `relative z-10`.
+- Recherche globale : `SearchDialog` (`<dialog>` natif, Ctrl/Cmd+K ou « / »), `searchSchools()` testé.
+- `ErrorBoundary` : recharge une fois si un chunk JS a disparu après une mise en ligne.
+- `BASE_PATH` (vite `base` + prerender) pour un sous-dossier ; CI et GitHub Pages dans `.github/workflows/`.
 - Routes : `/`, `/repertoire/?type=prepas`, `/ecole/<id>/`, `/comparateur/?ecoles=a,b&prepas=c` (lien partagé, relu puis nettoyé), `/analytique/`. Anciens `#/…` migrés.
 - `scripts/prerender.ts` : une page HTML par route dans `dist/` (meta, OG, JSON-LD, résumé sans JS), sitemap si `SITE_URL`.
 - Données : `src/data/index.ts` = base (`establishmentEnrichment.ts`) + `applyUpdates()` des JSON `src/data/updates/`.
@@ -24,6 +29,8 @@ SPA React 19 + Vite 8 + Tailwind 4 (front), scripts Python stdlib (données), pi
 - Pas de compteurs codés en dur.
 - Mobile 390 px : aucun débordement horizontal.
 - Ne pas appliquer Plus Jakarta Sans : ses espaces trop étroits collent les mots.
+- Contraste : slate-400/500 redéfinis dans `src/index.css` (clair) et `theme-dark.css` (sombre) ; texte ≥ 12 px sur mobile.
+- Lighthouse (scratchpad) : `CHROME_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome npx lighthouse@12 <url> --chrome-flags="--headless=new --no-sandbox"`. Dernier relevé : perf 95–99, a11y/BP/SEO 100.
 
 ## Python
 - `scripts/update_parcoursup.py` (+ `scripts/tests/`), `scripts/export_pipeline.py` : stdlib uniquement, lisent `data/etablissements_index.json`.

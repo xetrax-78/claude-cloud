@@ -10,8 +10,9 @@
   --color-slate-100: oklch(20.8% 0.042 265.755);
   --color-slate-200: oklch(27.9% 0.041 260.031);
   --color-slate-300: oklch(37.2% 0.044 257.287);
-  --color-slate-400: oklch(44.6% 0.043 257.281);
-  --color-slate-500: oklch(55.4% 0.046 257.417);
+  /* Gris de texte non inversés : contraste AA sur fond sombre */
+  --color-slate-400: oklch(65% 0.043 257);
+  --color-slate-500: oklch(70.4% 0.04 256.788);
   --color-slate-600: oklch(70.4% 0.04 256.788);
   --color-slate-700: oklch(86.9% 0.022 252.894);
   --color-slate-800: oklch(92.9% 0.013 255.508);

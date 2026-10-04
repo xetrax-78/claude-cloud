@@ -5,6 +5,8 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    // BASE_PATH=/sous-dossier/ pour un site servi hors de la racine (GitHub Pages)
+    base: process.env.BASE_PATH ?? '/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {

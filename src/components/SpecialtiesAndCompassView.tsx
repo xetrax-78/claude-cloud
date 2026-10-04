@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import heroImage from '../assets/images/hero-campus.webp';
+import heroImageSmall from '../assets/images/hero-campus-768.webp';
 import { usePersistentState } from '../utils/usePersistentState';
 import { analyzeWishlist, printWishlist } from '../utils/wishlist';
 import { 
@@ -327,6 +328,11 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
           <div className="lg:col-span-5 h-64 lg:h-full relative overflow-hidden bg-slate-100">
             <img 
               src={heroImage}
+              srcSet={`${heroImageSmall} 768w, ${heroImage} 1376w`}
+              sizes="(min-width: 1024px) 42vw, 100vw"
+              width={1376}
+              height={768}
+              fetchPriority="high"
               alt=""
               className="w-full h-full object-cover"
               onError={(e) => {
@@ -651,6 +657,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
 
               {/* Domain Switcher */}
               <select
+                aria-label="Domaine"
                 value={selectedDomain}
                 onChange={e => setSelectedDomain(e.target.value as DomaineIngenierie)}
                 className="text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-semibold"
@@ -1144,6 +1151,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Niveau d'entrée :</label>
                 <select
+                  aria-label="Niveau d'entrée"
                   value={profil}
                   onChange={e => setProfil(e.target.value as any)}
                   className="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium"
@@ -1159,6 +1167,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Région :</label>
                 <select
+                  aria-label="Région"
                   value={selectedRegion}
                   onChange={e => setSelectedRegion(e.target.value)}
                   className="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium"
@@ -1171,6 +1180,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Concours :</label>
                 <select
+                  aria-label="Concours"
                   value={selectedConcours}
                   onChange={e => setSelectedConcours(e.target.value)}
                   className="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium"
@@ -1346,6 +1356,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-slate-500">Trier par :</span>
                 <select
+                  aria-label="Trier par"
                   value={specialtySortBy}
                   onChange={e => setSpecialtySortBy(e.target.value as any)}
                   className="text-xs p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-semibold"

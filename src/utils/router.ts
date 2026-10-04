@@ -91,3 +91,27 @@ export function useRoute(): Route {
 
   return route;
 }
+
+/**
+ * État synchronisé avec un paramètre d'URL (?q=…), en replaceState : partageable,
+ * restauré au retour arrière, sans polluer l'historique. Absent de l'URL quand égal au défaut.
+ */
+export function useSearchParamState<T extends string | boolean>(key: string, defaultValue: T) {
+  const read = (): T => {
+    const raw = new URLSearchParams(window.location.search).get(key);
+    if (raw === null) return defaultValue;
+    return (typeof defaultValue === 'boolean' ? raw === '1' : raw) as T;
+  };
+  const [value, setValue] = useState<T>(read);
+
+  const update = (next: T) => {
+    setValue(next);
+    const params = new URLSearchParams(window.location.search);
+    if (next === defaultValue || next === '') params.delete(key);
+    else params.set(key, typeof next === 'boolean' ? '1' : String(next));
+    const qs = params.toString();
+    history.replaceState(history.state, '', `${window.location.pathname}${qs ? `?${qs}` : ''}`);
+  };
+
+  return [value, update] as const;
+}

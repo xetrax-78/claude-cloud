@@ -1,5 +1,7 @@
 import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { TopBar } from './components/TopBar';
+import { SearchDialog } from './components/SearchDialog';
+import { ErrorBoundary, reloadOnceForChunkError } from './components/ErrorBoundary';
 import { Ecole } from './types';
 import { usePersistentState } from './utils/usePersistentState';
 import { explorerHref, navigate, schoolHref, tabHref, useRoute } from './utils/router';
@@ -21,11 +23,25 @@ export default function App() {
   const route = useRoute();
   const [schools, setSchools] = useState<Ecole[] | null>(null);
   const [loadError, setLoadError] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Raccourcis : Ctrl/Cmd+K ou « / » ouvrent la recherche globale
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const typing = e.target instanceof HTMLElement && e.target.closest('input, textarea, select, [contenteditable]');
+      if ((e.key === 'k' && (e.ctrlKey || e.metaKey)) || (e.key === '/' && !typing)) {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   useEffect(() => {
     import('./data')
       .then(m => setSchools(m.ALL_ESTABLISHMENTS))
-      .catch(() => setLoadError(true));
+      .catch((err) => { if (!reloadOnceForChunkError(err)) setLoadError(true); });
   }, []);
 
   // Écoles d'ingénieurs et prépas CPGE sont comparées séparément ; listes conservées entre les visites
@@ -139,15 +155,19 @@ export default function App() {
         activeTab={route.tab}
         selectedSchoolsCount={comparedSchoolIds.length + comparedPrepaIds.length}
         totalEstablishments={schools?.length}
+        onOpenSearch={() => setSearchOpen(true)}
       />
+      <SearchDialog schools={schools} open={searchOpen} onClose={() => setSearchOpen(false)} />
 
-      <main id="main" tabIndex={-1} className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 outline-none">
+      <main id="main" tabIndex={-1} className="flex-1 min-h-[85vh] max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 outline-none">
         {loadError ? (
           <div role="alert" className="py-24 text-center text-sm text-rose-700">
             Impossible de charger les données. Rechargez la page.
           </div>
         ) : schools ? (
-          <Suspense fallback={<Loading />}>{renderView(schools)}</Suspense>
+          <ErrorBoundary resetKey={`${route.tab}/${route.schoolId ?? ''}`}>
+            <Suspense fallback={<Loading />}>{renderView(schools)}</Suspense>
+          </ErrorBoundary>
         ) : (
           <Loading />
         )}

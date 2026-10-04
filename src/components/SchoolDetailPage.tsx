@@ -2,10 +2,11 @@ import React from 'react';
 import { 
   ArrowLeft, ExternalLink, ShieldCheck, MapPin, Award, BookOpen,
   Building2, CheckCircle2, Target, TrendingUp, Briefcase, 
-  Check, Plus, BarChart3, BedDouble, Compass, Globe
+  Check, Plus, BarChart3, BedDouble, Compass, Globe, ChevronRight
 } from 'lucide-react';
 import { Ecole, ClassementMedia } from '../types';
 import { SourceTag, SOURCE_URLS, NON_COMMUNIQUE } from './SourceTag';
+import { explorerHref, tabHref } from '../utils/router';
 
 interface SchoolDetailPageProps {
   ecole: Ecole;
@@ -126,13 +127,25 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
       
       {/* 1. Header Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-        <button
-          onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>{isPrepa ? 'Retour aux Prépas CPGE' : 'Retour aux Écoles d\'Ingénieurs'}</span>
-        </button>
+        {/* Fil d'Ariane */}
+        <nav aria-label="Fil d'Ariane" className="min-w-0">
+          <ol className="flex flex-wrap items-center gap-1 text-xs sm:text-sm text-slate-500">
+            <li><a href={tabHref('boussole')} className="hover:text-slate-900">Accueil</a></li>
+            <li aria-hidden="true"><ChevronRight className="w-3.5 h-3.5 text-slate-300" /></li>
+            <li>
+              <a
+                href={explorerHref(isPrepa ? 'prepas' : 'ecoles')}
+                onClick={(e) => { e.preventDefault(); onBack(); }}
+                className="inline-flex items-center gap-1 font-semibold text-slate-600 hover:text-slate-900"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+                {isPrepa ? 'Prépas CPGE' : "Écoles d'ingénieurs"}
+              </a>
+            </li>
+            <li aria-hidden="true"><ChevronRight className="w-3.5 h-3.5 text-slate-300" /></li>
+            <li aria-current="page" className="text-slate-900 font-semibold truncate max-w-[14rem]">{ecole.sigle || ecole.nom_officiel}</li>
+          </ol>
+        </nav>
 
         <div className="flex flex-wrap items-center gap-2">
           <button

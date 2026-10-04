@@ -5,6 +5,7 @@ import {
   GraduationCap, BookOpen, LayoutGrid, Map as MapIcon
 } from 'lucide-react';
 import { Ecole, DomaineIngenierie, Statut } from '../types';
+import { schoolHref, useSearchParamState } from '../utils/router';
 
 interface ExplorerViewProps {
   type: 'ecoles' | 'prepas';
@@ -75,21 +76,22 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
   // Type affiché porté par l'URL (?type=prepas) pour que « Retour » depuis une prépa revienne au bon onglet
   const activeTab = type;
   const setActiveTab = onTypeChange;
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState<string>('Toutes');
-  const [selectedStatut, setSelectedStatut] = useState<Statut | 'Tous'>('Tous');
+  // Filtres conservés dans l'URL (?q=…&region=…) : recherche partageable et restaurée au retour
+  const [searchQuery, setSearchQuery] = useSearchParamState<string>('q', '');
+  const [selectedRegion, setSelectedRegion] = useSearchParamState<string>('region', 'Toutes');
+  const [selectedStatut, setSelectedStatut] = useSearchParamState<Statut | 'Tous'>('statut', 'Tous');
   
   // Specific filters for Écoles
-  const [selectedDomain, setSelectedDomain] = useState<string>('Tous');
-  const [selectedModel, setSelectedModel] = useState<'Tous' | 'post_prepa' | 'post_bac' | 'international'>('Tous');
+  const [selectedDomain, setSelectedDomain] = useSearchParamState<string>('domaine', 'Tous');
+  const [selectedModel, setSelectedModel] = useSearchParamState<'Tous' | 'post_prepa' | 'post_bac' | 'international'>('modele', 'Tous');
   
   // Specific filters for Prépas
-  const [selectedCpgeFiliere, setSelectedCpgeFiliere] = useState<string>('Toutes les filières');
-  const [onlyInternat, setOnlyInternat] = useState(false);
+  const [selectedCpgeFiliere, setSelectedCpgeFiliere] = useSearchParamState<string>('filiere', 'Toutes les filières');
+  const [onlyInternat, setOnlyInternat] = useSearchParamState<boolean>('internat', false);
   
   const [showFilters, setShowFilters] = useState(false);
-  const [display, setDisplay] = useState<'liste' | 'carte'>('liste');
-  const [sortBy, setSortBy] = useState<'rang' | 'performance' | 'frais' | 'selectivite'>('rang');
+  const [display, setDisplay] = useSearchParamState<'liste' | 'carte'>('vue', 'liste');
+  const [sortBy, setSortBy] = useSearchParamState<'rang' | 'performance' | 'frais' | 'selectivite'>('tri', 'rang');
 
   const countEcoles = useMemo(() => schools.filter(s => s.type_etablissement !== 'prepa_cpge').length, [schools]);
   const countPrepas = useMemo(() => schools.filter(s => s.type_etablissement === 'prepa_cpge').length, [schools]);
@@ -284,6 +286,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
             </button>
 
             <select
+              aria-label="Trier les résultats"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
               className="py-2 px-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 font-medium focus:outline-none cursor-pointer"
@@ -353,6 +356,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
                 <div className="flex items-center gap-1.5">
                   <span className="text-slate-500 font-medium">Spécialité CTI :</span>
                   <select
+                    aria-label="Spécialité"
                     value={selectedDomain}
                     onChange={(e) => setSelectedDomain(e.target.value)}
                     className="py-1 px-2.5 bg-white border border-slate-200 rounded-lg text-slate-800 font-medium focus:outline-none cursor-pointer"
@@ -381,6 +385,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
               <div className="flex items-center gap-1.5">
                 <span className="text-slate-500 font-medium">Région :</span>
                 <select
+                  aria-label="Région"
                   value={selectedRegion}
                   onChange={(e) => setSelectedRegion(e.target.value)}
                   className="py-1 px-2.5 bg-white border border-slate-200 rounded-lg text-slate-800 font-medium focus:outline-none cursor-pointer"
@@ -394,6 +399,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
               <div className="flex items-center gap-1.5">
                 <span className="text-slate-500 font-medium">Statut :</span>
                 <select
+                  aria-label="Statut"
                   value={selectedStatut}
                   onChange={(e) => setSelectedStatut(e.target.value as any)}
                   className="py-1 px-2.5 bg-white border border-slate-200 rounded-lg text-slate-800 font-medium focus:outline-none cursor-pointer"
@@ -482,8 +488,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
             return (
               <div
                 key={ecole.id}
-                onClick={() => onSelectSchool(ecole)}
-                className="bg-white rounded-xl border border-slate-200/90 hover:border-slate-400/80 transition-all p-5 flex flex-col justify-between cursor-pointer group hover:shadow-2xs"
+                className="relative bg-white rounded-xl border border-slate-200/90 hover:border-slate-400/80 focus-within:ring-2 focus-within:ring-indigo-500 transition-all p-5 flex flex-col justify-between cursor-pointer group hover:shadow-2xs"
               >
                 <div className="space-y-3">
                   
@@ -513,11 +518,9 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
 
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleCompare(ecole);
-                      }}
-                      className={`px-2 py-0.5 rounded text-[11px] font-medium border transition-colors ${
+                      onClick={() => onToggleCompare(ecole)}
+                      aria-pressed={isCompared}
+                      className={`relative z-10 px-2 py-0.5 rounded text-[11px] font-medium border transition-colors ${
                         isCompared 
                           ? 'bg-indigo-50 border-indigo-200 text-indigo-700 font-bold' 
                           : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
@@ -537,13 +540,13 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
                         </span>
                       )}
                       {ecole.statut_juridique === 'Public' && (
-                        <span className="text-[10px] text-emerald-700 font-medium">Public (0€)</span>
+                        <span className="text-[10px] text-emerald-700 font-medium">Public</span>
                       )}
                       {isPrepa && (
                         <span className="text-[10px] font-mono font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/60 px-1.5 py-0.2 rounded">
                           {selectedCpgeFiliere !== 'Toutes les filières'
                             ? `${selectedCpgeFiliere} #${ecole.prepa_stats?.find(s => s.filiere === selectedCpgeFiliere)?.rang_national_filiere || ecole.classements[0]?.rang_general}`
-                            : `#${ecole.classements[0]?.rang_general} National`}
+                            : ecole.classements[0]?.rang_general ? `#${ecole.classements[0].rang_general} National` : 'CPGE'}
                         </span>
                       )}
                       {!isPrepa && ecole.classements[0]?.rang_general && (
@@ -554,7 +557,10 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
                     </div>
 
                     <h2 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
-                      {ecole.nom_officiel}
+                      {/* Lien étiré sur toute la carte : clavier, clic-milieu et indexation */}
+                      <a href={schoolHref(ecole.id)} className="outline-none after:absolute after:inset-0 after:rounded-xl">
+                        {ecole.nom_officiel}
+                      </a>
                     </h2>
                   </div>
 

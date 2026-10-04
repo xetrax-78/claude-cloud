@@ -12,6 +12,8 @@ description: Vérifie IngéFinder avant commit — typecheck, tests, build + pr�
 
 ## Attendu
 - `hero loaded true`, `detail /ecole/<id>/ sources ≥ 1`, `after back /repertoire/`, `prepa back /repertoire/?type=prepas`
+- `filter url ?q=lyon` puis `filter restored lyon`, `keyboard card /ecole/…`, `search → /ecole/utc-compiegne-fra/ | dialog closed true`
+- `tablet 768 768`
 - `map markers` > 0 (les tuiles OSM peuvent rester grises si le réseau les bloque)
 - `shared opens /comparateur/` avec le badge du comparateur rempli
 - `legacy hash → /ecole/…`, `prerender h1` = nom de l'école, `jsonld 1`

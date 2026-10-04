@@ -14,6 +14,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <script>
       // Thème appliqué avant le premier affichage (évite un flash blanc)
+      document.documentElement.classList.add('js');
       try {
         var t = localStorage.getItem('ingefinder.theme');
         if (t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
