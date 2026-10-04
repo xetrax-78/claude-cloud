@@ -69,7 +69,7 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             {activeMode === 'ecoles'
-              ? 'Comparez les salaires de sortie, l\'insertion, les frais, le concours CTI et les classements certifiés.'
+              ? 'Comparez les salaires de sortie, l\'insertion, les frais, le concours et les classements presse.'
               : 'Comparez les taux d\'intégration (X, Mines, Centrale, Arts et Métiers), les filières (PTSI, MPSI...) et l\'internat.'}
           </p>
         </div>
@@ -423,7 +423,7 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
 
                     {/* Rang national général & filières */}
                     <tr>
-                      <td className="p-3 font-semibold text-slate-600 bg-slate-50/50">Palmarès & Rang National Certifié</td>
+                      <td className="p-3 font-semibold text-slate-600 bg-slate-50/50">Palmarès & rang national (presse)</td>
                       {activeComparedList.map(prepa => {
                         const top = prepa.prepa_stats?.[0];
                         const genRank = prepa.classements?.[0]?.rang_general;

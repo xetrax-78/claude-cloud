@@ -1,20 +1,22 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# IngéFinder Francophonie
 
-# Run and deploy your AI Studio app
+Plateforme d'orientation vers les écoles d'ingénieurs (France, Suisse, Belgique, Québec) et les prépas scientifiques CPGE : répertoire, fiches détaillées, comparateur, analyse de vœux Parcoursup et recherche multicritère.
 
-This contains everything you need to run your app locally.
+## Front (React + Vite + Tailwind)
 
-View your app in AI Studio: https://ai.studio/apps/8e563652-e8fa-4545-9025-558b7cb82811
+```bash
+npm install
+npm run dev      # http://localhost:3000
+npm run lint     # vérification TypeScript
+npm run build    # sortie dans dist/
+```
 
-## Run Locally
+Le site est une SPA statique : `dist/` peut être servi tel quel par n'importe quel hébergeur. Le routage utilise le hash (`#/repertoire`, `#/ecole/<id>`, `#/comparateur`, `#/analytique`), donc aucune règle de réécriture serveur n'est nécessaire.
 
-**Prerequisites:**  Node.js
+Les données affichées sont dans `src/data/` (TypeScript, chargé à la demande).
 
+## Pipeline de données (Python)
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+`pipeline.py` collecte les données (Parcoursup open data, palmarès presse) via `fetcher.py` et `parsers/`, les dédoublonne (`entity_resolution.py`) et les stocke en SQLite (`schema.sql`, `database.py`). `app.py` est une interface Streamlit d'exploration de cette base.
+
+Le pipeline n'alimente pas encore le front : les deux jeux de données sont indépendants.

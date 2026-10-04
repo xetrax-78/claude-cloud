@@ -109,10 +109,10 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
       return `Classement Thématique : ${cl.domaine_specialite}`;
     }
     if (cl.rang_post_bac) {
-      return 'Palmarès Officiel Écoles Post-Bac';
+      return 'Palmarès presse — écoles post-bac';
     }
     if (cl.rang_post_prepa || isPostPrepa) {
-      return 'Palmarès Officiel Grandes Écoles Post-Prépa';
+      return 'Palmarès presse — écoles post-prépa';
     }
     if (cl.source_media.includes('QS') || cl.source_media.includes('Shanghai')) {
       return 'Palmarès Universitaire Mondial';
@@ -124,7 +124,7 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
     <div className="space-y-6 pb-20 max-w-5xl mx-auto">
       
       {/* 1. Header Toolbar */}
-      <div className="flex items-center justify-between gap-3 pt-2">
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
         <button
           onClick={onBack}
           className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
@@ -133,7 +133,7 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
           <span>{isPrepa ? 'Retour aux Prépas CPGE' : 'Retour aux Écoles d\'Ingénieurs'}</span>
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => onToggleCompare(ecole)}
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
@@ -293,17 +293,17 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
       <section className="space-y-4">
         <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
           <BarChart3 className="w-4 h-4 text-indigo-600" />
-          <span>Statistiques & Voies d'Accès Certifiées</span>
+          <span>Statistiques & voies d'accès</span>
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           
           {/* Diagramme 1 : Sélectivité Concours ou Parcoursup */}
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <div>
+            <div className="flex items-center justify-between gap-3 pb-2 border-b border-slate-100">
+              <div className="min-w-0">
                 <h3 className="text-xs font-bold text-slate-900">
-                  {isPrepa 
+                  {isPrepa
                     ? 'Sélectivité & Vœux Parcoursup' 
                     : isPostPrepa 
                     ? 'Sélectivité Concours CPGE' 
@@ -324,7 +324,7 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs">
                 <span className="text-slate-600">
-                  {isPostPrepa ? 'Taux d\'admission concours :' : 'Taux d\'accès officiel :'}
+                  {isPostPrepa ? 'Taux d\'admission concours :' : 'Taux d\'accès Parcoursup :'}
                 </span>
                 <span className="font-mono font-bold text-slate-900">
                   {primaryAdmission?.taux_acces ? `${primaryAdmission.taux_acces}%` : 'Sélectif'}
@@ -519,16 +519,16 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
         </section>
       )}
 
-      {/* 5. Classements Officiels Certifiés */}
+      {/* 5. Classements presse */}
       <section className="bg-white p-5 sm:p-6 rounded-xl border border-slate-200 shadow-2xs space-y-4">
         <div className="flex items-center justify-between pb-2 border-b border-slate-100">
           <div>
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
               <Award className="w-3.5 h-3.5 text-amber-500" />
-              <span>Classements Officiels Certifiés</span>
+              <span>Classements presse</span>
             </h2>
             <p className="text-[11px] text-slate-500 mt-0.5">
-              Barèmes officiels des organismes de presse : Le Figaro Étudiant (sur 20) · L'Étudiant (sur 120 points) · L'Usine Nouvelle (sur 100 points)
+              Barèmes publiés par chaque magazine : Le Figaro Étudiant (sur 20) · L'Étudiant (sur 120 points) · L'Usine Nouvelle (sur 100 points)
             </p>
           </div>
         </div>
@@ -541,7 +541,7 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
                 <th className="py-2.5 px-3 font-semibold">Année</th>
                 <th className="py-2.5 px-3 font-semibold">Typologie de Palmarès</th>
                 <th className="py-2.5 px-3 text-center font-semibold">Rang National</th>
-                <th className="py-2.5 px-3 text-right font-semibold">Score & Barème Officiel</th>
+                <th className="py-2.5 px-3 text-right font-semibold">Score & barème</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from 'react';
+import heroImage from '../assets/images/hero-campus.webp';
+import { usePersistentState } from '../utils/usePersistentState';
 import { 
   Sparkles, SlidersHorizontal, CheckCircle2, AlertCircle, ArrowRight, 
   MapPin, ShieldCheck, GraduationCap, ChevronRight, Filter, RotateCcw,
@@ -73,7 +75,10 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
   onToggleCompare,
   comparedSchoolIds,
 }) => {
-  // Navigation interne au Studio
+  const engineeringSchools = useMemo(() => schools.filter(s => s.type_etablissement !== 'prepa_cpge'), [schools]);
+  const totalSpecialties = useMemo(() => engineeringSchools.reduce((n, s) => n + s.specialites.length, 0), [engineeringSchools]);
+
+  // Navigation entre modules
   const [activeSection, setActiveSection] = useState<StudioSection>('specialties_studio');
 
   // Spécialité actuellement sélectionnée pour exploration
@@ -88,12 +93,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
   ]);
 
   // Panier de 10 vœux Parcoursup & Audit d'admissibilité
-  const [parcoursupWishlist, setParcoursupWishlist] = useState<string[]>([
-    'utc-compiegne-fra',
-    'insa-lyon-fra',
-    'ece-paris-fra',
-    'polytech-saclay-fra'
-  ]);
+  const [parcoursupWishlist, setParcoursupWishlist] = usePersistentState<string[]>('ingefinder.voeux', []);
   const [candidateAcademicLevel, setCandidateAcademicLevel] = useState<'tb' | 'b' | 'ab'>('tb');
   const [copyToast, setCopyToast] = useState(false);
 
@@ -268,7 +268,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
       statusColor = 'text-rose-800 bg-rose-50 border-rose-200';
     } else {
       scoreSecurite = Math.min(100, Math.round((securite * 25 + cibles * 15 + ambitieux * 10) / total * 5));
-      diagnostic = '✅ Stratégie d’orientation équilibrée respectant les recommandations officielles de Parcoursup.';
+      diagnostic = '✅ Liste équilibrée entre vœux ambitieux, cibles et de sécurité.';
       statusColor = 'text-emerald-800 bg-emerald-50 border-emerald-200';
     }
 
@@ -330,7 +330,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
   const copyWishlistPlan = () => {
     const text = wishlistAnalysis.schools.map((s, i) => {
       const psup = s.admissions.find(a => a.source === 'Parcoursup') || s.admissions[0];
-      return `${i + 1}. ${s.nom_officiel} (${s.sigle}) - ${s.ville_principale} - Taux d'accès: ${psup?.taux_acces || 'Concours'}% - Carte: ${s.parcoursup_url || 'https://dossier.parcoursup.fr/Candidat/carte'}`;
+      return `${i + 1}. ${s.nom_officiel} (${s.sigle}) - ${s.ville_principale} - Taux d'accès: ${psup?.taux_acces != null ? `${psup.taux_acces}%` : 'sur concours'} - Carte: ${s.parcoursup_url || 'https://dossier.parcoursup.fr/Candidat/carte'}`;
     }).join('\n');
     navigator.clipboard.writeText(`=== MON PLAN DE 10 VŒUX PARCOURSUP (INGÉFINDER) ===\n\n${text}\n\nIndice de Sécurité: ${wishlistAnalysis.scoreSecurite}%\nDiagnostic: ${wishlistAnalysis.diagnostic}`);
     setCopyToast(true);
@@ -346,40 +346,39 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
           <div className="lg:col-span-7 p-6 sm:p-10 z-10">
             <div className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 mb-2">
               <span className="font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 font-bold">
-                BOUSSOLE DÉCISIONNELLE & SPÉCIALITÉS
+                BOUSSOLE D'ORIENTATION
               </span>
-              <span>103 Spécialités Détaillées · 60 Écoles CTI</span>
+              <span>{totalSpecialties} spécialités · {engineeringSchools.length} écoles d'ingénieurs</span>
             </div>
             
             <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-slate-900 max-w-xl text-balance">
-              Le Studio d'Intelligence des Filières & Stratégie d'Admission.
+              Trouvez votre école d'ingénieurs et préparez vos vœux.
             </h1>
             
             <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-lg leading-relaxed">
-              Explorez avec une précision chirurgicale les <strong>débouchés métiers</strong>, <strong>salaires par spécialité</strong>, <strong>partenaires industriels</strong>, et construisez votre liste de 10 vœux Parcoursup sécurisée.
+              Comparez les <strong>débouchés</strong>, les <strong>salaires par spécialité</strong> et les <strong>entreprises partenaires</strong>, puis construisez une liste de 10 vœux Parcoursup équilibrée.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-medium text-slate-600">
               <span className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded border border-slate-200">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                103 Cursus & Fiches Métiers
+                {totalSpecialties} cursus & fiches métiers
               </span>
               <span className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded border border-slate-200">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                Chaires & Recruteurs Partenaires
+                Chaires & recruteurs partenaires
               </span>
               <span className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded border border-slate-200">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                Audit Prédictif Parcoursup
+                Analyse de vos vœux Parcoursup
               </span>
             </div>
           </div>
 
           <div className="lg:col-span-5 h-64 lg:h-full relative overflow-hidden bg-slate-100">
             <img 
-              src="/src/assets/images/hero_engineering_campus_1791058341658.jpg" 
-              alt="Campus d'école d'ingénieurs moderne" 
-              referrerPolicy="no-referrer"
+              src={heroImage}
+              alt=""
               className="w-full h-full object-cover"
               onError={(e) => {
                 (e.target as HTMLElement).style.display = 'none';
@@ -390,7 +389,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
         </div>
       </section>
 
-      {/* Main Studio Navigation Bar (5 Power Modules) */}
+      {/* Navigation entre les 5 modules */}
       <div className="bg-white p-2 sm:p-2.5 rounded-xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 flex-wrap">
           <button
@@ -402,7 +401,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
             }`}
           >
             <BookOpen className="w-4 h-4 text-indigo-400" />
-            <span>Studio des Spécialités & Débouchés</span>
+            <span>Spécialités & débouchés</span>
           </button>
 
           <button
@@ -414,7 +413,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
             }`}
           >
             <Scale className="w-4 h-4 text-emerald-400" />
-            <span>Comparateur de Filières</span>
+            <span>Comparer des filières</span>
           </button>
 
           <button
@@ -426,7 +425,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
             }`}
           >
             <Target className="w-4 h-4 text-rose-500" />
-            <span>Stratégie Parcoursup (10 Vœux)</span>
+            <span>Mes vœux Parcoursup</span>
             <span className="font-mono text-[10px] bg-rose-100 text-rose-800 px-1.5 py-0.2 rounded font-bold">
               {parcoursupWishlist.length}/10
             </span>
@@ -441,7 +440,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
             }`}
           >
             <Compass className="w-4 h-4 text-amber-500" />
-            <span>Moteur Multi-Critères Turbo</span>
+            <span>Recherche multicritère</span>
           </button>
 
           <button
@@ -453,12 +452,12 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
             }`}
           >
             <Trophy className="w-4 h-4 text-amber-400" />
-            <span>Palmarès Spécialités (Le Figaro / L'Étudiant)</span>
+            <span>Palmarès par spécialité</span>
           </button>
         </div>
 
         <span className="text-xs text-slate-500 font-mono hidden xl:inline px-3 font-semibold">
-          103 cursus actifs
+          {totalSpecialties} cursus
         </span>
       </div>
 
@@ -908,7 +907,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
                 <div className="flex items-center gap-2">
                   <Target className="w-5 h-5 text-rose-500" />
                   <h2 className="text-base font-bold text-slate-900">
-                    Constructeur & Audit Prédictif de Vœux Parcoursup (Session 2025/2026)
+                    Construire et équilibrer ma liste de vœux Parcoursup
                   </h2>
                 </div>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -1056,7 +1055,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
           {/* Grouped Selectivity Tiers */}
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-6">
             <h3 className="text-sm font-bold text-slate-900">
-              Ajouter des vœux par catégorie de sélectivité certifiée :
+              Ajouter des vœux par niveau de sélectivité :
             </h3>
 
             <div className="space-y-6">
@@ -1155,7 +1154,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
       )}
 
       {/* ========================================================================= */}
-      {/* SECTION 4 : MOTEUR MULTI-CRITÈRES TURBO                                    */}
+      {/* SECTION 4 : RECHERCHE MULTICRITÈRE                                          */}
       {/* ========================================================================= */}
       {activeSection === 'multicriteria_engine' && (
         <div className="space-y-6">
@@ -1379,7 +1378,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
               <div>
                 <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <Trophy className="w-5 h-5 text-amber-500" />
-                  <span>Palmarès Officiels par Spécialité — Le Figaro & L'Étudiant</span>
+                  <span>Palmarès par spécialité — Le Figaro Étudiant & L'Étudiant</span>
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">
                   Évaluation académique, proximité avec les entreprises et sélectivité réelle.

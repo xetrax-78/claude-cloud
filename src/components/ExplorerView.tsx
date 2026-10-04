@@ -202,8 +202,8 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             {activeTab === 'ecoles'
-              ? 'Répertoire officiel des 60 écoles d\'ingénieurs habilitées CTI (Post-Prépa, Post-Bac et Internationales).'
-              : 'Répertoire certifié des 59 prépas scientifiques de France (PTSI, MPSI, PCSI, PSI, MPI, BCPST).'}
+              ? `${countEcoles} écoles d'ingénieurs en France, Suisse, Belgique et au Québec (post-prépa, post-bac et internationales).`
+              : `${countPrepas} prépas scientifiques en France (PTSI, MPSI, PCSI, PSI, MPI, BCPST).`}
           </p>
         </div>
 
@@ -279,7 +279,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
               onChange={(e) => setSortBy(e.target.value as any)}
               className="py-2 px-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 font-medium focus:outline-none cursor-pointer"
             >
-              <option value="rang">Tri : Palmarès officiel</option>
+              <option value="rang">Tri : Palmarès presse</option>
               <option value="performance">
                 {activeTab === 'ecoles' ? 'Tri : Salaire embauche' : 'Tri : Taux Top Écoles'}
               </option>
