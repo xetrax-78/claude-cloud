@@ -1,0 +1,6 @@
+{
+  "name": "IngéFinder Francophonie",
+  "description": "Plateforme d'orientation, moteur de matching multicritère et pipeline de données pour les écoles d'ingénieurs en France (CTI), Suisse, Belgique et Canada (Québec).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
