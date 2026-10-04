@@ -1,12 +1,15 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense, lazy } from 'react';
 import { 
   Search, SlidersHorizontal, Check, Plus, 
   ExternalLink, BedDouble, ChevronRight, School, RotateCcw,
-  GraduationCap, BookOpen
+  GraduationCap, BookOpen, LayoutGrid, Map as MapIcon
 } from 'lucide-react';
 import { Ecole, DomaineIngenierie, Statut } from '../types';
+import { schoolHref, useSearchParamState } from '../utils/router';
 
 interface ExplorerViewProps {
+  type: 'ecoles' | 'prepas';
+  onTypeChange: (type: 'ecoles' | 'prepas') => void;
   schools: Ecole[];
   onSelectSchool: (ecole: Ecole) => void;
   onToggleCompare: (ecole: Ecole) => void;
@@ -31,6 +34,8 @@ const ALL_DOMAINS: DomaineIngenierie[] = [
   'Mathématiques Financières & Modélisation',
   'Télécommunications & Réseaux'
 ];
+
+const CampusMap = lazy(() => import('./CampusMap'));
 
 const CPGE_FILIERES = [
   'Toutes les filières',
@@ -59,6 +64,8 @@ const FRENCH_REGIONS = [
 ];
 
 export const ExplorerView: React.FC<ExplorerViewProps> = ({
+  type,
+  onTypeChange,
   schools,
   onSelectSchool,
   onToggleCompare,
@@ -66,21 +73,25 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
   comparedPrepaIds = [],
 }) => {
   // STRICT SEPARATION: Écoles vs Prépas (never mixed!)
-  const [activeTab, setActiveTab] = useState<'ecoles' | 'prepas'>('ecoles');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState<string>('Toutes');
-  const [selectedStatut, setSelectedStatut] = useState<Statut | 'Tous'>('Tous');
+  // Type affiché porté par l'URL (?type=prepas) pour que « Retour » depuis une prépa revienne au bon onglet
+  const activeTab = type;
+  const setActiveTab = onTypeChange;
+  // Filtres conservés dans l'URL (?q=…&region=…) : recherche partageable et restaurée au retour
+  const [searchQuery, setSearchQuery] = useSearchParamState<string>('q', '');
+  const [selectedRegion, setSelectedRegion] = useSearchParamState<string>('region', 'Toutes');
+  const [selectedStatut, setSelectedStatut] = useSearchParamState<Statut | 'Tous'>('statut', 'Tous');
   
   // Specific filters for Écoles
-  const [selectedDomain, setSelectedDomain] = useState<string>('Tous');
-  const [selectedModel, setSelectedModel] = useState<'Tous' | 'post_prepa' | 'post_bac' | 'international'>('Tous');
+  const [selectedDomain, setSelectedDomain] = useSearchParamState<string>('domaine', 'Tous');
+  const [selectedModel, setSelectedModel] = useSearchParamState<'Tous' | 'post_prepa' | 'post_bac' | 'international'>('modele', 'Tous');
   
   // Specific filters for Prépas
-  const [selectedCpgeFiliere, setSelectedCpgeFiliere] = useState<string>('Toutes les filières');
-  const [onlyInternat, setOnlyInternat] = useState(false);
+  const [selectedCpgeFiliere, setSelectedCpgeFiliere] = useSearchParamState<string>('filiere', 'Toutes les filières');
+  const [onlyInternat, setOnlyInternat] = useSearchParamState<boolean>('internat', false);
   
   const [showFilters, setShowFilters] = useState(false);
-  const [sortBy, setSortBy] = useState<'rang' | 'performance' | 'frais' | 'selectivite'>('rang');
+  const [display, setDisplay] = useSearchParamState<'liste' | 'carte'>('vue', 'liste');
+  const [sortBy, setSortBy] = useSearchParamState<'rang' | 'performance' | 'frais' | 'selectivite'>('tri', 'rang');
 
   const countEcoles = useMemo(() => schools.filter(s => s.type_etablissement !== 'prepa_cpge').length, [schools]);
   const countPrepas = useMemo(() => schools.filter(s => s.type_etablissement === 'prepa_cpge').length, [schools]);
@@ -180,8 +191,9 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
         return a.frais_scolarite_annuels - b.frais_scolarite_annuels;
       }
       if (sortBy === 'selectivite') {
-        const tauxA = a.admissions[0]?.taux_acces || 50;
-        const tauxB = b.admissions[0]?.taux_acces || 50;
+        // Sélectivité inconnue triée en dernier
+        const tauxA = a.admissions[0]?.taux_acces ?? 999;
+        const tauxB = b.admissions[0]?.taux_acces ?? 999;
         return tauxA - tauxB;
       }
       return 0;
@@ -202,8 +214,8 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             {activeTab === 'ecoles'
-              ? 'Répertoire officiel des 60 écoles d\'ingénieurs habilitées CTI (Post-Prépa, Post-Bac et Internationales).'
-              : 'Répertoire certifié des 59 prépas scientifiques de France (PTSI, MPSI, PCSI, PSI, MPI, BCPST).'}
+              ? `${countEcoles} écoles d'ingénieurs en France, Suisse, Belgique et au Québec (post-prépa, post-bac et internationales).`
+              : `${countPrepas} prépas scientifiques en France (PTSI, MPSI, PCSI, PSI, MPI, BCPST).`}
           </p>
         </div>
 
@@ -275,11 +287,12 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
             </button>
 
             <select
+              aria-label="Trier les résultats"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
               className="py-2 px-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 font-medium focus:outline-none cursor-pointer"
             >
-              <option value="rang">Tri : Palmarès officiel</option>
+              <option value="rang">Tri : Palmarès presse</option>
               <option value="performance">
                 {activeTab === 'ecoles' ? 'Tri : Salaire embauche' : 'Tri : Taux Top Écoles'}
               </option>
@@ -344,6 +357,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
                 <div className="flex items-center gap-1.5">
                   <span className="text-slate-500 font-medium">Spécialité CTI :</span>
                   <select
+                    aria-label="Spécialité"
                     value={selectedDomain}
                     onChange={(e) => setSelectedDomain(e.target.value)}
                     className="py-1 px-2.5 bg-white border border-slate-200 rounded-lg text-slate-800 font-medium focus:outline-none cursor-pointer"
@@ -372,6 +386,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
               <div className="flex items-center gap-1.5">
                 <span className="text-slate-500 font-medium">Région :</span>
                 <select
+                  aria-label="Région"
                   value={selectedRegion}
                   onChange={(e) => setSelectedRegion(e.target.value)}
                   className="py-1 px-2.5 bg-white border border-slate-200 rounded-lg text-slate-800 font-medium focus:outline-none cursor-pointer"
@@ -385,6 +400,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
               <div className="flex items-center gap-1.5">
                 <span className="text-slate-500 font-medium">Statut :</span>
                 <select
+                  aria-label="Statut"
                   value={selectedStatut}
                   onChange={(e) => setSelectedStatut(e.target.value as any)}
                   className="py-1 px-2.5 bg-white border border-slate-200 rounded-lg text-slate-800 font-medium focus:outline-none cursor-pointer"
@@ -420,7 +436,21 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
             </span>
           )}
         </div>
-        <span className="text-[11px] text-slate-400">Cliquez sur une carte pour ouvrir la fiche dédiée</span>
+        <div role="group" aria-label="Affichage des résultats" className="inline-flex p-0.5 bg-slate-100 rounded-lg">
+          {([['liste', 'Liste', LayoutGrid], ['carte', 'Carte', MapIcon]] as const).map(([value, label, Icon]) => (
+            <button
+              key={value}
+              onClick={() => setDisplay(value)}
+              aria-pressed={display === value}
+              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md font-semibold ${
+                display === value ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>{label}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* 4. Minimalist Clean Cards Grid */}
@@ -435,6 +465,10 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
             Réinitialiser les critères
           </button>
         </div>
+      ) : display === 'carte' ? (
+        <Suspense fallback={<div role="status" className="h-[60vh] grid place-items-center text-sm text-slate-500">Chargement de la carte…</div>}>
+          <CampusMap schools={filteredSchools} />
+        </Suspense>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredSchools.map((ecole) => {
@@ -455,8 +489,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
             return (
               <div
                 key={ecole.id}
-                onClick={() => onSelectSchool(ecole)}
-                className="bg-white rounded-xl border border-slate-200/90 hover:border-slate-400/80 transition-all p-5 flex flex-col justify-between cursor-pointer group hover:shadow-2xs"
+                className="relative bg-white rounded-xl border border-slate-200/90 hover:border-slate-400/80 focus-within:ring-2 focus-within:ring-indigo-500 transition-all p-5 flex flex-col justify-between cursor-pointer group hover:shadow-2xs"
               >
                 <div className="space-y-3">
                   
@@ -486,11 +519,9 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
 
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleCompare(ecole);
-                      }}
-                      className={`px-2 py-0.5 rounded text-[11px] font-medium border transition-colors ${
+                      onClick={() => onToggleCompare(ecole)}
+                      aria-pressed={isCompared}
+                      className={`relative z-10 px-2 py-0.5 rounded text-[11px] font-medium border transition-colors ${
                         isCompared 
                           ? 'bg-indigo-50 border-indigo-200 text-indigo-700 font-bold' 
                           : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
@@ -510,13 +541,13 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
                         </span>
                       )}
                       {ecole.statut_juridique === 'Public' && (
-                        <span className="text-[10px] text-emerald-700 font-medium">Public (0€)</span>
+                        <span className="text-[10px] text-emerald-700 font-medium">Public</span>
                       )}
                       {isPrepa && (
                         <span className="text-[10px] font-mono font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/60 px-1.5 py-0.2 rounded">
                           {selectedCpgeFiliere !== 'Toutes les filières'
                             ? `${selectedCpgeFiliere} #${ecole.prepa_stats?.find(s => s.filiere === selectedCpgeFiliere)?.rang_national_filiere || ecole.classements[0]?.rang_general}`
-                            : `#${ecole.classements[0]?.rang_general} National`}
+                            : ecole.classements[0]?.rang_general ? `#${ecole.classements[0].rang_general} National` : 'CPGE'}
                         </span>
                       )}
                       {!isPrepa && ecole.classements[0]?.rang_general && (
@@ -527,7 +558,10 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
                     </div>
 
                     <h2 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
-                      {ecole.nom_officiel}
+                      {/* Lien étiré sur toute la carte : clavier, clic-milieu et indexation */}
+                      <a href={schoolHref(ecole.id)} className="outline-none after:absolute after:inset-0 after:rounded-xl">
+                        {ecole.nom_officiel}
+                      </a>
                     </h2>
                   </div>
 
@@ -542,13 +576,13 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
                       <div>
                         <span className="block text-[10px] text-slate-400">Top Écoles</span>
                         <strong className="font-mono text-xs font-bold text-emerald-700">
-                          {topPrepa?.taux_integration_top_ecoles || 40}%
+                          {topPrepa?.taux_integration_top_ecoles != null ? `${topPrepa.taux_integration_top_ecoles}%` : '—'}
                         </strong>
                       </div>
                       <div>
                         <span className="block text-[10px] text-slate-400">X & ENS</span>
                         <strong className="font-mono text-xs font-bold text-indigo-700">
-                          {topPrepa?.taux_integration_x_ens || 10}%
+                          {topPrepa?.taux_integration_x_ens != null ? `${topPrepa.taux_integration_x_ens}%` : '—'}
                         </strong>
                       </div>
                       <div>
@@ -569,7 +603,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
                       <div>
                         <span className="block text-[10px] text-slate-400">Insertion 6m</span>
                         <strong className="font-mono text-xs font-bold text-slate-900">
-                          {ecole.insertion?.taux_emploi_6_mois || 98}%
+                          {ecole.insertion?.taux_emploi_6_mois ? `${ecole.insertion.taux_emploi_6_mois}%` : '—'}
                         </strong>
                       </div>
                       <div>

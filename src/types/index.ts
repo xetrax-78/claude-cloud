@@ -80,6 +80,7 @@ export interface AdmissionsStats {
   raw_payload?: Record<string, any>;
   parcoursup_formation_id?: string;
   code_formation?: string;
+  source_url?: string;
 }
 
 export interface ClassementMedia {
@@ -94,6 +95,7 @@ export interface ClassementMedia {
   rang_post_bac?: number;
   rang_post_prepa?: number;
   raw_metrics?: Record<string, any>;
+  source_url?: string;
 }
 
 export interface PrepaIntegrationStats {
@@ -116,6 +118,8 @@ export interface InsertionProfessionnelle {
   pct_international?: number; // en %
   pct_poursuite_etudes?: number; // en %
   duree_moyenne_recherche_mois?: number;
+  source?: string; // ex. "Enquête CGE", "L'Étudiant"
+  source_url?: string;
 }
 
 export interface Ecole {
@@ -169,10 +173,10 @@ export interface MatchingPreferences {
 export interface ScoredEcole {
   ecole: Ecole;
   scoreMatch: number;
-  scorePrestige: number;
-  scoreSalaire: number;
+  scorePrestige: number | null; // null : donnée non communiquée
+  scoreSalaire: number | null;
   scoreBudget: number;
-  scoreInsertion: number;
+  scoreInsertion: number | null;
   scoreDomaine: number;
   bonusAlternance: number;
   pointsForts: string[];

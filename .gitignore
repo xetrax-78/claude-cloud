@@ -6,3 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+__pycache__/
+*.pyc
+.venv/
+*.db
+data/rapport_parcoursup.md
+shots/

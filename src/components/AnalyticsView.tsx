@@ -21,17 +21,21 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
   const [hoveredSchool, setHoveredSchool] = useState<Ecole | null>(null);
 
   // Statistiques globales
-  const totalSchools = schools.length;
+  // Statistiques d'insertion : écoles d'ingénieurs disposant de données uniquement (pas les prépas)
+  const ecolesWithData = schools.filter(
+    s => s.type_etablissement !== 'prepa_cpge' && s.insertion?.salaire_moyen_embauche && s.insertion?.taux_emploi_6_mois
+  );
+  const totalSchools = ecolesWithData.length;
   const avgSalaryOverall = (
-    schools.reduce((acc, s) => acc + (s.insertion?.salaire_moyen_embauche || 45), 0) / totalSchools
+    ecolesWithData.reduce((acc, s) => acc + s.insertion.salaire_moyen_embauche, 0) / Math.max(1, totalSchools)
   ).toFixed(1);
 
   const avgInsertionOverall = (
-    schools.reduce((acc, s) => acc + (s.insertion?.taux_emploi_6_mois || 96), 0) / totalSchools
+    ecolesWithData.reduce((acc, s) => acc + s.insertion.taux_emploi_6_mois, 0) / Math.max(1, totalSchools)
   ).toFixed(1);
 
   // Palmarès Top 5 Salaires
-  const topSalaries = [...schools].sort((a, b) => {
+  const topSalaries = [...ecolesWithData].sort((a, b) => {
     const salA = a.insertion?.salaire_moyen_embauche || 0;
     const salB = b.insertion?.salaire_moyen_embauche || 0;
     return salB - salA;
@@ -61,11 +65,11 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
       {/* Overview Stat Ribbon */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="bg-white p-5 rounded-xl border border-slate-200">
-          <span className="text-xs font-semibold text-slate-500 block mb-1">Établissements analysés</span>
+          <span className="text-xs font-semibold text-slate-500 block mb-1">Écoles analysées</span>
           <span className="text-2xl font-bold font-mono text-slate-900 tabular-nums">
             {totalSchools}
           </span>
-          <span className="text-[11px] text-slate-400 block mt-0.5">France CTI, CH, BE, QC</span>
+          <span className="text-[11px] text-slate-400 block mt-0.5">Avec données d'insertion · FR, CH, BE, QC</span>
         </div>
 
         <div className="bg-white p-5 rounded-xl border border-slate-200">
@@ -145,9 +149,9 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
             })}
 
             {/* Scatter points for each school */}
-            {schools.map((ecole) => {
-              const sal = ecole.insertion?.salaire_moyen_embauche || 45;
-              const ins = ecole.insertion?.taux_emploi_6_mois || 96;
+            {ecolesWithData.map((ecole) => {
+              const sal = ecole.insertion.salaire_moyen_embauche;
+              const ins = ecole.insertion.taux_emploi_6_mois;
               const cx = scaleX(ins);
               const cy = scaleY(sal);
               const color = COUNTRY_COLORS[ecole.pays] || '#64748b';
@@ -292,13 +296,13 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
             Top 5 : Rémunérations Moyennes à la Sortie
           </h3>
           <p className="text-xs text-slate-500">
-            Source : Enquêtes d'insertion CGE, palmarès L'Étudiant & Usine Nouvelle 2025.
+            Salaires déclarés par promotion (2024–2025) ; source et année détaillées sur chaque fiche.
           </p>
 
           <div className="divide-y divide-slate-100">
             {topSalaries.map((ecole, idx) => {
-              const sal = ecole.insertion?.salaire_moyen_embauche || 45;
-              const primes = ecole.insertion?.salaire_avec_primes || sal + 6;
+              const sal = ecole.insertion.salaire_moyen_embauche;
+              const primes = ecole.insertion.salaire_avec_primes;
 
               return (
                 <div 
@@ -324,9 +328,11 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                     <span className="font-mono text-sm font-bold text-slate-900 tabular-nums">
                       {sal} k€/an
                     </span>
-                    <span className="block font-mono text-[10px] text-emerald-600 tabular-nums">
-                      {primes} k€ avec primes
-                    </span>
+                    {primes != null && (
+                      <span className="block font-mono text-[10px] text-emerald-600 tabular-nums">
+                        {primes} k€ avec primes
+                      </span>
+                    )}
                   </div>
                 </div>
               );

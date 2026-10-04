@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { 
   Scale, X, Plus, ShieldCheck, Check, GraduationCap, BookOpen, 
-  ExternalLink, BedDouble 
+  ExternalLink, BedDouble, Link2, Download 
 } from 'lucide-react';
 import { Ecole } from '../types';
+import { tabHref, useSearchParamState } from '../utils/router';
+import { comparisonRows, downloadCsv, toCsv } from '../utils/csv';
 
 interface ComparatorViewProps {
   schools: Ecole[];
@@ -31,9 +33,26 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
   onSelectSchoolForPage,
 }) => {
   // STRICT SEPARATION: compare Écoles with Écoles OR Prépas with Prépas!
-  const [activeMode, setActiveMode] = useState<'ecoles' | 'prepas'>('ecoles');
+  // Mode dans l'URL (?mode=prepas) : « Comparer avec… » depuis une fiche prépa ouvre le bon onglet
+  const [activeMode, setActiveMode] = useSearchParamState<'ecoles' | 'prepas'>('mode', 'ecoles');
   const [selectorOpen, setSelectorOpen] = useState(false);
   const [selectorSearch, setSelectorSearch] = useState('');
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  // Lien partageable : /comparateur/?ecoles=a,b&prepas=c (relu par App au chargement)
+  const copyShareLink = async () => {
+    const params = new URLSearchParams();
+    if (comparedSchoolIds.length) params.set('ecoles', comparedSchoolIds.join(','));
+    if (comparedPrepaIds.length) params.set('prepas', comparedPrepaIds.join(','));
+    const url = `${window.location.origin}${tabHref('comparator', params.toString().replace(/%2C/g, ','))}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      window.prompt('Copiez ce lien :', url);
+    }
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2500);
+  };
 
   const handleToggleSchool = onToggleCompareSchool || onToggleCompare || (() => {});
   const handleTogglePrepa = onToggleComparePrepa || onToggleCompare || (() => {});
@@ -69,7 +88,7 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             {activeMode === 'ecoles'
-              ? 'Comparez les salaires de sortie, l\'insertion, les frais, le concours CTI et les classements certifiés.'
+              ? 'Comparez les salaires de sortie, l\'insertion, les frais, le concours et les classements presse.'
               : 'Comparez les taux d\'intégration (X, Mines, Centrale, Arts et Métiers), les filières (PTSI, MPSI...) et l\'internat.'}
           </p>
         </div>
@@ -114,6 +133,24 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
               className="text-slate-400 hover:text-rose-600 transition-colors underline"
             >
               Tout effacer
+            </button>
+          )}
+          {comparedSchoolIds.length + comparedPrepaIds.length > 0 && (
+            <button
+              onClick={copyShareLink}
+              className="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800 font-semibold"
+            >
+              <Link2 className="w-3.5 h-3.5" aria-hidden="true" />
+              <span aria-live="polite">{linkCopied ? 'Lien copié !' : 'Copier le lien'}</span>
+            </button>
+          )}
+          {activeComparedList.length > 0 && (
+            <button
+              onClick={() => downloadCsv(`comparaison-${activeMode}.csv`, toCsv(comparisonRows(activeComparedList, activeMode)))}
+              className="inline-flex items-center gap-1 text-slate-600 hover:text-slate-900 font-semibold"
+            >
+              <Download className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>CSV</span>
             </button>
           )}
         </div>
@@ -198,8 +235,12 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
       ) : (
         /* 4. Complete Comparison Matrix (Strictly Specialized) */
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+          {activeComparedList.length > 1 && (
+            <p className="sm:hidden px-3 pt-2 text-[11px] text-slate-500">Faites glisser horizontalement pour passer d'un établissement à l'autre.</p>
+          )}
+          {/* Mobile : 1re colonne fixe, une colonne d'établissement par écran avec défilement aimanté (index.css) */}
+          <div className="overflow-x-auto compare-scroll">
+            <table className="w-full text-left text-xs border-collapse compare-table">
               
               {/* Header Row: Names & Remove Buttons */}
               <thead>
@@ -289,9 +330,12 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
                           <strong className="font-mono text-sm font-bold text-emerald-700">
                             {ecole.insertion.salaire_moyen_embauche} k€/an
                           </strong>
-                          <span className="block text-[11px] text-slate-400">
-                            Primes incluses : {ecole.insertion.salaire_avec_primes || (ecole.insertion.salaire_moyen_embauche + 5).toFixed(1)} k€
-                          </span>
+                          {ecole.insertion.salaire_avec_primes != null && (
+                            <span className="block text-[11px] text-slate-400">
+                              Primes incluses : {ecole.insertion.salaire_avec_primes} k€
+                            </span>
+                          )}
+                          <span className="block text-[10px] text-slate-400">Promo {ecole.insertion.annee_promo}</span>
                         </td>
                       ))}
                     </tr>
@@ -301,7 +345,7 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
                       <td className="p-3 font-semibold text-slate-600 bg-slate-50/50">Salaire après 3 ans d'exercice</td>
                       {activeComparedList.map(ecole => (
                         <td key={ecole.id} className="p-3 font-mono font-bold text-indigo-700">
-                          {ecole.insertion.salaire_3_ans || (ecole.insertion.salaire_moyen_embauche + 12).toFixed(1)} k€/an
+                          {ecole.insertion.salaire_3_ans ? `${ecole.insertion.salaire_3_ans} k€/an` : 'Non communiqué'}
                         </td>
                       ))}
                     </tr>
@@ -406,7 +450,7 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
                       <td className="p-3 font-semibold text-slate-600 bg-slate-50/50">Taux d'intégration Polytechnique (X) & ENS</td>
                       {activeComparedList.map(prepa => (
                         <td key={prepa.id} className="p-3 font-mono font-bold text-indigo-700 text-sm">
-                          {prepa.prepa_stats?.[0]?.taux_integration_x_ens || 12}%
+                          {prepa.prepa_stats?.[0]?.taux_integration_x_ens != null ? `${prepa.prepa_stats[0].taux_integration_x_ens}%` : 'Non communiqué'}
                         </td>
                       ))}
                     </tr>
@@ -416,14 +460,14 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
                       <td className="p-3 font-semibold text-slate-600 bg-slate-50/50">Top Écoles (X, Mines, Centrale, Arts et Métiers)</td>
                       {activeComparedList.map(prepa => (
                         <td key={prepa.id} className="p-3 font-mono font-bold text-emerald-700 text-sm">
-                          {prepa.prepa_stats?.[0]?.taux_integration_top_ecoles || 65}%
+                          {prepa.prepa_stats?.[0]?.taux_integration_top_ecoles != null ? `${prepa.prepa_stats[0].taux_integration_top_ecoles}%` : 'Non communiqué'}
                         </td>
                       ))}
                     </tr>
 
                     {/* Rang national général & filières */}
                     <tr>
-                      <td className="p-3 font-semibold text-slate-600 bg-slate-50/50">Palmarès & Rang National Certifié</td>
+                      <td className="p-3 font-semibold text-slate-600 bg-slate-50/50">Palmarès & rang national (presse)</td>
                       {activeComparedList.map(prepa => {
                         const top = prepa.prepa_stats?.[0];
                         const genRank = prepa.classements?.[0]?.rang_general;
@@ -469,8 +513,9 @@ export const ComparatorView: React.FC<ComparatorViewProps> = ({
                         const psup = prepa.admissions?.find(a => a.source === 'Parcoursup') || prepa.admissions?.[0];
                         return (
                           <td key={prepa.id} className="p-3 font-mono">
-                            <strong className="text-slate-900 block">{psup?.taux_acces ? `${psup.taux_acces}%` : 'Sélectif'}</strong>
-                            <span className="text-[11px] text-slate-500">{psup?.capacite || 180} places</span>
+                            <strong className="text-slate-900 block">{psup?.taux_acces != null ? `${psup.taux_acces}%` : 'Non communiqué'}</strong>
+                            {psup?.capacite ? <span className="text-[11px] text-slate-500">{psup.capacite} places</span> : null}
+                            {psup && <span className="block text-[10px] text-slate-400">{psup.source} {psup.annee}</span>}
                           </td>
                         );
                       })}

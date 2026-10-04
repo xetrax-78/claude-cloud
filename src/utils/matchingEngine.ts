@@ -1,19 +1,14 @@
 import { Ecole, MatchingPreferences, ScoredEcole } from '../types';
+import { classifyWish } from './wishlist';
 
 export function runMatchingAlgorithm(
   schools: Ecole[],
   preferences: MatchingPreferences
 ): ScoredEcole[] {
-  // Trouver les min / max pour la normalisation
-  let maxSalaire = 0;
-  let minSalaire = 100;
-  for (const s of schools) {
-    const sal = s.insertion?.salaire_moyen_embauche || 45;
-    if (sal > maxSalaire) maxSalaire = sal;
-    if (sal < minSalaire) minSalaire = sal;
-  }
-  if (maxSalaire === 0) maxSalaire = 60;
-  if (minSalaire === 100) minSalaire = 40;
+  // Min / max des salaires connus pour la normalisation (les écoles sans donnée sont ignorées)
+  const salairesConnus = schools.map(s => s.insertion?.salaire_moyen_embauche).filter((v): v is number => !!v);
+  const maxSalaire = salairesConnus.length ? Math.max(...salairesConnus) : 0;
+  const minSalaire = salairesConnus.length ? Math.min(...salairesConnus) : 0;
 
   const results: ScoredEcole[] = [];
 
@@ -54,8 +49,9 @@ export function runMatchingAlgorithm(
 
     // 4. Filtre Salaire minimum
     if (preferences.salaireMin && preferences.salaireMin > 0) {
-      const currentSal = ecole.insertion?.salaire_moyen_embauche || 40;
-      if (currentSal < preferences.salaireMin) {
+      // Salaire inconnu : impossible de garantir le minimum demandé
+      const currentSal = ecole.insertion?.salaire_moyen_embauche;
+      if (!currentSal || currentSal < preferences.salaireMin) {
         continue;
       }
     }
@@ -63,8 +59,8 @@ export function runMatchingAlgorithm(
     // 5. Filtre Sélectivité maximale (taux d'accès)
     if (preferences.tauxAccesMax && preferences.tauxAccesMax > 0) {
       const psup = ecole.admissions.find(a => a.source === 'Parcoursup') || ecole.admissions[0];
-      const tauxAcc = psup?.taux_acces ?? 50;
-      if (tauxAcc > preferences.tauxAccesMax) {
+      const tauxAcc = psup?.taux_acces;
+      if (tauxAcc == null || tauxAcc > preferences.tauxAccesMax) {
         continue;
       }
     }
@@ -125,16 +121,23 @@ export function runMatchingAlgorithm(
     }
 
     // 9. Métriques de performance et classements
-    const salaire = ecole.insertion?.salaire_moyen_embauche || 45.0;
-    const insertion = ecole.insertion?.taux_emploi_6_mois || 96.0;
+    // Sous-scores [0.0 - 1.0] ; null = donnée non communiquée, critère ignoré dans la moyenne
+    const salaire = ecole.insertion?.salaire_moyen_embauche || null;
+    const insertion = ecole.insertion?.taux_emploi_6_mois || null;
+    const rangs = ecole.classements.map(c => c.rang_general).filter((r): r is number => r != null);
 
-    const rangs = ecole.classements.map(c => c.rang_general).filter((r): r is number => r !== undefined);
-    const meilleurRang = rangs.length > 0 ? Math.min(...rangs) : 40;
+    const scorePrestige = rangs.length ? Math.max(0.15, 1.0 - (Math.min(...rangs) - 1) / 55) : null;
+    const scoreSalaire = salaire != null && maxSalaire > minSalaire
+      ? Math.min(1.0, Math.max(0.1, (salaire - minSalaire) / (maxSalaire - minSalaire)))
+      : null;
+    const scoreInsertion = insertion != null ? Math.min(1.0, Math.max(0.5, (insertion - 90) / 10)) : null;
 
-    // Normalisation sous-scores [0.0 - 1.0]
-    const scorePrestige = Math.max(0.15, 1.0 - (meilleurRang - 1) / 55);
-    const scoreSalaire = Math.min(1.0, Math.max(0.1, (salaire - minSalaire) / (maxSalaire - minSalaire + 0.01)));
-    const scoreInsertion = Math.min(1.0, Math.max(0.5, (insertion - 90) / 10));
+    const inconnus = [
+      scorePrestige == null && 'classement',
+      scoreSalaire == null && 'salaire',
+      scoreInsertion == null && 'insertion',
+    ].filter(Boolean);
+    if (inconnus.length) pointsVigilance.push(`Non communiqué (critère ignoré) : ${inconnus.join(', ')}`);
 
     // Budget & Frais
     let scoreBudget = 1.0;
@@ -142,7 +145,7 @@ export function runMatchingAlgorithm(
     if (frais <= preferences.budgetMax) {
       scoreBudget = 1.0 - (frais / Math.max(preferences.budgetMax, 1000)) * 0.35;
       if (frais === 0) {
-        pointsForts.push(`Gratuité des frais de scolarité (statut militaire/boursier)`);
+        pointsForts.push(`Pas de frais de scolarité`);
       } else if (frais <= 1000) {
         pointsForts.push(`Frais universitaires réduits : ${frais} €/an`);
       }
@@ -152,7 +155,7 @@ export function runMatchingAlgorithm(
       pointsVigilance.push(`Dépasse votre budget de ${depassement.toLocaleString('fr-FR')} €/an`);
     }
 
-    if (salaire >= 50) {
+    if (salaire != null && salaire >= 50) {
       pointsForts.push(`Salaire moyen d'embauche élevé : ${salaire.toFixed(1)} k€/an`);
     }
     if (ecole.habilitation_cti) {
@@ -165,16 +168,16 @@ export function runMatchingAlgorithm(
       pointsForts.push(`Taux d'accès Parcoursup : ${psup.taux_acces}% (${psup.nb_voeux} vœux)`);
     }
 
-    // Pondération globale
-    const totalPoids = preferences.poidsPrestige + preferences.poidsSalaire + preferences.poidsBudget + preferences.poidsInsertion;
-    const normPoids = totalPoids > 0 ? totalPoids : 1;
-
-    const baseScore = (
-      (scorePrestige * preferences.poidsPrestige) +
-      (scoreSalaire * preferences.poidsSalaire) +
-      (scoreBudget * preferences.poidsBudget) +
-      (scoreInsertion * preferences.poidsInsertion)
-    ) / normPoids;
+    // Moyenne pondérée sur les seuls critères connus (le budget l'est toujours)
+    const criteres: [number | null, number][] = [
+      [scorePrestige, preferences.poidsPrestige],
+      [scoreSalaire, preferences.poidsSalaire],
+      [scoreBudget, preferences.poidsBudget],
+      [scoreInsertion, preferences.poidsInsertion],
+    ];
+    const connus = criteres.filter((c): c is [number, number] => c[0] != null);
+    const totalPoids = connus.reduce((sum, [, poids]) => sum + poids, 0);
+    const baseScore = totalPoids > 0 ? connus.reduce((sum, [score, poids]) => sum + score * poids, 0) / totalPoids : scoreBudget;
 
     const domainMultiplier = preferences.domaines.length > 0 ? (0.4 + 0.6 * scoreDomaine) : 1.0;
     const voieMultiplier = admissibleVoie ? 1.0 : 0.6;
@@ -185,10 +188,10 @@ export function runMatchingAlgorithm(
     results.push({
       ecole,
       scoreMatch: scoreFinal,
-      scorePrestige: Math.round(scorePrestige * 100),
-      scoreSalaire: Math.round(scoreSalaire * 100),
+      scorePrestige: scorePrestige == null ? null : Math.round(scorePrestige * 100),
+      scoreSalaire: scoreSalaire == null ? null : Math.round(scoreSalaire * 100),
       scoreBudget: Math.round(scoreBudget * 100),
-      scoreInsertion: Math.round(scoreInsertion * 100),
+      scoreInsertion: scoreInsertion == null ? null : Math.round(scoreInsertion * 100),
       scoreDomaine: Math.round(scoreDomaine * 100),
       bonusAlternance,
       pointsForts,
@@ -205,7 +208,7 @@ export interface SpecialtyRankedEntry {
   rank: number;
   noteGlobale: number;
   domaineName: string;
-  salaireSortie: number;
+  salaireSortie: number | null;
   tauxAccesPsup?: number;
   specialiteOfferte: string;
   sourceClassement: string;
@@ -283,7 +286,7 @@ export function getSpecialtyRankings(
     rank: c.specRank || (idx + 1),
     noteGlobale: Math.round(c.note * 10) / 10,
     domaineName: selectedDomain,
-    salaireSortie: c.ecole.insertion?.salaire_moyen_embauche || 45.0,
+    salaireSortie: c.ecole.insertion?.salaire_moyen_embauche || null,
     tauxAccesPsup: c.ecole.admissions.find(a => a.source === 'Parcoursup')?.taux_acces,
     specialiteOfferte: c.specTitle,
     sourceClassement: c.source,
@@ -301,7 +304,7 @@ export interface SelectivityGroup {
     tauxAcces?: number; 
     voeux?: number; 
     mentionTB?: number; 
-    salaire: number;
+    salaire: number | null;
     concoursNom: string;
   }[];
 }
@@ -313,8 +316,10 @@ export function getSelectivityTiers(schools: Ecole[]): SelectivityGroup[] {
 
   for (const ecole of schools) {
     const psup = ecole.admissions.find(a => a.source === 'Parcoursup') || ecole.admissions[0];
-    const taux = psup?.taux_acces || 25;
-    const salaire = ecole.insertion?.salaire_moyen_embauche || 45;
+    const salaire = ecole.insertion?.salaire_moyen_embauche || null;
+    // Même règle que la liste de vœux ; sélectivité inconnue → établissement non classé
+    const categorie = classifyWish(ecole);
+    if (!categorie) continue;
 
     const item = {
       ecole,
@@ -325,13 +330,7 @@ export function getSelectivityTiers(schools: Ecole[]): SelectivityGroup[] {
       concoursNom: psup?.nom_filiere_concours || 'Admission Titre / Concours'
     };
 
-    if (taux <= 15 || (ecole.classements[0]?.rang_general && ecole.classements[0].rang_general <= 8)) {
-      ambitieux.push(item);
-    } else if (taux <= 32 || (ecole.classements[0]?.rang_general && ecole.classements[0].rang_general <= 28)) {
-      cible.push(item);
-    } else {
-      securite.push(item);
-    }
+    ({ ambitieux, cible, securite })[categorie].push(item);
   }
 
   return [
