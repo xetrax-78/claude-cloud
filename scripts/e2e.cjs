@@ -33,6 +33,8 @@ const path = (page) => { const u = new URL(page.url()); return u.pathname + u.se
   await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: BASE });
   const p = await ctx.newPage(); watch(p, 'desk');
   const nav = (name) => p.locator('header nav').getByRole('link', { name }).click();
+  // Attend l'affichage effectif (vues chargées à la demande) plutôt qu'une pause fixe
+  const visible = (locator, timeout = 10000) => locator.first().waitFor({ state: 'visible', timeout }).then(() => true, () => false);
 
   // Accueil + modules de la Boussole
   await p.goto(BASE + '/', { waitUntil: 'networkidle' });
@@ -49,8 +51,8 @@ const path = (page) => { const u = new URL(page.url()); return u.pathname + u.se
   await p.locator('main button', { hasText: /Comparer/ }).first().click();
   await p.locator('main h2 a').first().click(); await p.waitForTimeout(300);
   const detail = new URL(p.url()).pathname;
-  check('fiche école', detail.startsWith('/ecole/'), detail);
-  check('sources affichées', (await p.locator('main').getByText(/^Source :/).count()) > 0);
+  check('fiche école', detail.startsWith('/ecole/') && await visible(p.locator('main h1')), detail);
+  check('sources affichées', await visible(p.locator('main').getByText(/^Source :/)));
   await p.screenshot({ path: `${SHOTS}/desk-detail.png` });
   await p.goBack(); await p.waitForTimeout(300);
   check('retour répertoire', path(p) === '/repertoire/');
@@ -75,7 +77,7 @@ const path = (page) => { const u = new URL(page.url()); return u.pathname + u.se
   const select = p.getByLabel('Comparer avec un autre établissement');
   await select.selectOption({ index: 1 }); await p.waitForTimeout(400);
   check('comparer avec → comparateur', path(p).startsWith('/comparateur/'), path(p));
-  check('comparateur rempli', (await p.locator('main table thead th').count()) >= 3);
+  check('comparateur rempli', await visible(p.locator('main table thead th').nth(2)));
 
   // Recherche globale
   await p.keyboard.press('Control+k');
@@ -86,13 +88,13 @@ const path = (page) => { const u = new URL(page.url()); return u.pathname + u.se
 
   // Établissement étranger : encart du pays
   await p.goto(BASE + '/ecole/epfl-lausanne-che/', { waitUntil: 'networkidle' });
-  check('encart admission Suisse', (await p.getByRole('heading', { name: /Suisse romande/ }).count()) === 1);
+  check('encart admission Suisse', await visible(p.getByRole('heading', { name: /Suisse romande/ })));
 
   // Carte
   await p.goto(BASE + '/repertoire/', { waitUntil: 'networkidle' });
   await p.getByRole('button', { name: 'Carte' }).click();
   await p.waitForSelector('.leaflet-container', { timeout: 10000 }); await p.waitForTimeout(500);
-  check('marqueurs carte', (await p.locator('path.leaflet-interactive').count()) > 0);
+  check('marqueurs carte', await visible(p.locator('path.leaflet-interactive')));
 
   // Lien de comparaison partagé + CSV
   await p.goto(BASE + '/comparateur/', { waitUntil: 'networkidle' });
@@ -107,11 +109,11 @@ const path = (page) => { const u = new URL(page.url()); return u.pathname + u.se
   // Lien direct, ancien lien #/, adresse inconnue, pré-rendu sans JS
   const p2 = await ctx.newPage(); watch(p2, 'deep');
   await p2.goto(BASE + detail, { waitUntil: 'networkidle' });
-  check('lien direct', (await p2.locator('main h1').count()) > 0);
+  check('lien direct', await visible(p2.locator('main h1')));
   await p2.goto(BASE + '/#/ecole/insa-lyon-fra', { waitUntil: 'networkidle' });
   check('ancien lien #/', path(p2) === '/ecole/insa-lyon-fra/');
   await p2.goto(BASE + '/ecole/nexistepas/', { waitUntil: 'networkidle' });
-  check('établissement inconnu', (await p2.locator('main').innerText()).includes('introuvable'));
+  check('établissement inconnu', await visible(p2.locator('main').getByText('introuvable')));
   const nojs = await (await b.newContext({ javaScriptEnabled: false })).newPage();
   await nojs.goto(BASE + detail);
   check('pré-rendu sans JS', (await nojs.locator('h1').count()) > 0 && (await nojs.locator('script[type="application/ld+json"]').count()) > 0);
@@ -120,7 +122,7 @@ const path = (page) => { const u = new URL(page.url()); return u.pathname + u.se
   await p.goto(BASE + '/', { waitUntil: 'networkidle' });
   await p.getByRole('button', { name: /Mes vœux Parcoursup/ }).click();
   await p.locator('main button', { hasText: /Ajouter/ }).first().click();
-  check('bouton PDF des vœux', (await p.getByRole('button', { name: /PDF/ }).count()) === 1);
+  check('bouton PDF des vœux', await visible(p.getByRole('button', { name: /PDF/ })));
 
   // PWA
   const manifest = await p.evaluate(async () => (await fetch(document.querySelector('link[rel=manifest]').href)).json());
