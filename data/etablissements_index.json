@@ -1,0 +1,1918 @@
+[
+  {
+    "id": "polytechnique-fra",
+    "nom_officiel": "École Polytechnique",
+    "sigle": "X",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Palaiseau"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "centralesupelec-fra",
+    "nom_officiel": "CentraleSupélec",
+    "sigle": "CS",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Gif-sur-Yvette",
+      "Cesson-Sévigné",
+      "Metz"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "mines-paris-fra",
+    "nom_officiel": "Mines Paris - PSL",
+    "sigle": "Mines Paris",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Paris",
+      "Valbonne",
+      "Fontainebleau"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "telecom-paris-fra",
+    "nom_officiel": "Télécom Paris",
+    "sigle": "Télécom Paris",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Palaiseau"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "ponts-paristech-fra",
+    "nom_officiel": "École des Ponts ParisTech",
+    "sigle": "Ponts ParisTech",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Champs-sur-Marne"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "ensam-paristech-fra",
+    "nom_officiel": "Arts et Métiers ParisTech",
+    "sigle": "ENSAM",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Paris",
+      "Lille",
+      "Aix-en-Provence"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "ensta-paris-fra",
+    "nom_officiel": "ENSTA Paris",
+    "sigle": "ENSTA Paris",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Palaiseau"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "centrale-lyon-fra",
+    "nom_officiel": "École Centrale de Lyon",
+    "sigle": "Centrale Lyon",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Écully",
+      "Saint-Étienne"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "ensimag-grenoble-fra",
+    "nom_officiel": "Grenoble INP - Ensimag",
+    "sigle": "Ensimag",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Saint-Martin-d'Hères"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "isae-supaero-fra",
+    "nom_officiel": "ISAE-SUPAERO",
+    "sigle": "ISAE-SUPAERO",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Toulouse"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "insa-lyon-fra",
+    "nom_officiel": "Institut National des Sciences Appliquées de Lyon",
+    "sigle": "INSA Lyon",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Villeurbanne",
+      "Bellignat"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Groupe INSA (Bac Général avec spécialités scientifiques)",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "insa-toulouse-fra",
+    "nom_officiel": "Institut National des Sciences Appliquées de Toulouse",
+    "sigle": "INSA Toulouse",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Toulouse"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Groupe INSA Toulouse (Parcoursup)",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "utc-compiegne-fra",
+    "nom_officiel": "Université de Technologie de Compiègne",
+    "sigle": "UTC",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Compiègne"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Réseau UT - Tronc Commun Ingénieur (Parcoursup)",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "utt-troyes-fra",
+    "nom_officiel": "Université de Technologie de Troyes",
+    "sigle": "UTT",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Troyes"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Réseau UT Post-bac",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "epita-paris-fra",
+    "nom_officiel": "EPITA - École pour l'Informatique et les Techniques Avancées",
+    "sigle": "EPITA",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Le Kremlin-Bicêtre",
+      "Lyon",
+      "Toulouse"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Advance (Informatique & Cybersécurité)",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "estp-paris-fra",
+    "nom_officiel": "ESTP Paris - Grande École d'Ingénieurs de la Construction",
+    "sigle": "ESTP",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Cachan",
+      "Troyes"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "esilv-paris-fra",
+    "nom_officiel": "ESILV - École Supérieure d'Ingénieurs Léonard de Vinci",
+    "sigle": "ESILV",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Courbevoie",
+      "Nantes"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Puissance Alpha (Post-bac)",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "epfl-lausanne-che",
+    "nom_officiel": "École Polytechnique Fédérale de Lausanne",
+    "sigle": "EPFL",
+    "type": "ecole",
+    "recrutement": "international",
+    "pays": "Suisse",
+    "villes": [
+      "Lausanne",
+      "Neuchâtel"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "hes-so-vd-che",
+    "nom_officiel": "HES-SO - Haute École d'Ingénierie et de Gestion du Canton de Vaud (HEIG-VD)",
+    "sigle": "HEIG-VD",
+    "type": "ecole",
+    "recrutement": "international",
+    "pays": "Suisse",
+    "villes": [
+      "Yverdon-les-Bains"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "epl-louvain-bel",
+    "nom_officiel": "École Polytechnique de Louvain - UCLouvain",
+    "sigle": "EPL",
+    "type": "ecole",
+    "recrutement": "international",
+    "pays": "Belgique",
+    "villes": [
+      "Louvain-la-Neuve"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "polytech-bruxelles-bel",
+    "nom_officiel": "École Polytechnique de Bruxelles - ULB",
+    "sigle": "Polytech Bruxelles",
+    "type": "ecole",
+    "recrutement": "international",
+    "pays": "Belgique",
+    "villes": [
+      "Bruxelles"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "polymtl-montreal-can",
+    "nom_officiel": "Polytechnique Montréal",
+    "sigle": "PolyMTL",
+    "type": "ecole",
+    "recrutement": "international",
+    "pays": "Canada",
+    "villes": [
+      "Montréal"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "ets-montreal-can",
+    "nom_officiel": "École de Technologie Supérieure - Université du Québec",
+    "sigle": "ÉTS Montréal",
+    "type": "ecole",
+    "recrutement": "international",
+    "pays": "Canada",
+    "villes": [
+      "Montréal"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "ulaval-genie-can",
+    "nom_officiel": "Université Laval - Faculté des Sciences et de Génie",
+    "sigle": "ULaval Génie",
+    "type": "ecole",
+    "recrutement": "international",
+    "pays": "Canada",
+    "villes": [
+      "Québec"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "usherbrooke-genie-can",
+    "nom_officiel": "Université de Sherbrooke - Faculté de Génie",
+    "sigle": "UdeS Génie",
+    "type": "ecole",
+    "recrutement": "international",
+    "pays": "Canada",
+    "villes": [
+      "Sherbrooke"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "mines-nancy-fra",
+    "nom_officiel": "École Nationale Supérieure des Mines de Nancy",
+    "sigle": "Mines Nancy",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Nancy"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "mines-saint-etienne-fra",
+    "nom_officiel": "École Nationale Supérieure des Mines de Saint-Étienne",
+    "sigle": "Mines Saint-Étienne",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Saint-Étienne",
+      "Gardanne"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "telecom-sudparis-fra",
+    "nom_officiel": "Télécom SudParis",
+    "sigle": "Télécom SudParis",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Évry-Courcouronnes"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "espci-paris-fra",
+    "nom_officiel": "ESPCI Paris - PSL",
+    "sigle": "ESPCI Paris",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "chimie-paristech-fra",
+    "nom_officiel": "Chimie ParisTech - PSL",
+    "sigle": "Chimie ParisTech",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "agroparistech-saclay-fra",
+    "nom_officiel": "AgroParisTech - Institut des Sciences et Industries du Vivant et de l'Environnement",
+    "sigle": "AgroParisTech",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Palaiseau"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "polytech-liege-bel",
+    "nom_officiel": "Faculté des Sciences Appliquées - Polytech Liège",
+    "sigle": "Polytech Liège",
+    "type": "ecole",
+    "recrutement": "international",
+    "pays": "Belgique",
+    "villes": [
+      "Liège"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "fpms-mons-bel",
+    "nom_officiel": "Faculté Polytechnique de Mons - Université de Mons",
+    "sigle": "FPMs Mons",
+    "type": "ecole",
+    "recrutement": "international",
+    "pays": "Belgique",
+    "villes": [
+      "Mons"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "utbm-belfort-fra",
+    "nom_officiel": "Université de Technologie de Belfort-Montbéliard",
+    "sigle": "UTBM",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Belfort",
+      "Sévenans"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Réseau UT Post-bac",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "efrei-paris-fra",
+    "nom_officiel": "EFREI Paris - Grande École du Numérique",
+    "sigle": "EFREI",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Villejuif",
+      "Bordeaux"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Puissance Alpha (Ingénieur du Numérique)",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "ensae-paris-fra",
+    "nom_officiel": "ENSAE Paris - Institut Polytechnique de Paris",
+    "sigle": "ENSAE Paris",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Palaiseau"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "centrale-nantes-fra",
+    "nom_officiel": "École Centrale de Nantes",
+    "sigle": "Centrale Nantes",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Nantes"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "enac-toulouse-fra",
+    "nom_officiel": "École Nationale de l'Aviation Civile",
+    "sigle": "ENAC",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Toulouse"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "estaca-paris-fra",
+    "nom_officiel": "ESTACA - École Supérieure des Techniques Aéronautiques et de Construction Automobile",
+    "sigle": "ESTACA",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Montigny-le-Bretonneux",
+      "Laval"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Avenir (Aéronautique & Transports)",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "polytech-sorbonne-fra",
+    "nom_officiel": "Polytech Sorbonne - Réseau Polytech",
+    "sigle": "Polytech Sorbonne",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Geipi Polytech (Post-bac)",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "enseeiht-toulouse-fra",
+    "nom_officiel": "Toulouse INP - ENSEEIHT",
+    "sigle": "ENSEEIHT",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Toulouse"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "entpe-lyon-fra",
+    "nom_officiel": "ENTPE - École Nationale des Travaux Publics de l'État",
+    "sigle": "ENTPE",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Vaulx-en-Velin"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "epf-cachan-fra",
+    "nom_officiel": "EPF - École d'Ingénieurs (ex-École Polytechnique Féminine)",
+    "sigle": "EPF",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Cachan",
+      "Montpellier"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Avenir Post-bac",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "esiea-paris-fra",
+    "nom_officiel": "ESIEA - École d'Ingénieurs du Monde Numérique",
+    "sigle": "ESIEA",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Ivry-sur-Seine",
+      "Laval"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Puissance Alpha (Cybersécurité & Numérique)",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "insa-rennes-fra",
+    "nom_officiel": "Institut National des Sciences Appliquées de Rennes",
+    "sigle": "INSA Rennes",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Rennes"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Groupe INSA - Cursus Ingénieur Post-bac",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "insa-rouen-fra",
+    "nom_officiel": "Institut National des Sciences Appliquées de Rouen Normandie",
+    "sigle": "INSA Rouen",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Saint-Étienne-du-Rouvray"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Groupe INSA - Cursus Ingénieur Post-bac",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "polytech-saclay-fra",
+    "nom_officiel": "École Polytechnique Universitaire de Paris-Saclay",
+    "sigle": "Polytech Paris-Saclay",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Orsay"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Geipi Polytech - Cycle Préparatoire Peip",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "ece-paris-fra",
+    "nom_officiel": "ECE - École d'Ingénieurs du Numérique",
+    "sigle": "ECE",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Paris",
+      "Lyon"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Avenir - Cycle Ingénieur Post-bac",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "isep-paris-fra",
+    "nom_officiel": "ISEP - Institut Supérieur d'Électronique de Paris",
+    "sigle": "ISEP",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Issy-les-Moulineaux"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Puissance Alpha - Cursus Ingénieur Post-bac",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "esiee-paris-fra",
+    "nom_officiel": "ESIEE Paris - Université Gustave Eiffel",
+    "sigle": "ESIEE Paris",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Champs-sur-Marne"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Puissance Alpha - Cursus Ingénieur Post-bac",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "ipsa-paris-fra",
+    "nom_officiel": "IPSA - Institut Polytechnique des Sciences Avancées",
+    "sigle": "IPSA",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Ivry-sur-Seine",
+      "Toulouse"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Advance - Cycle Ingénieur Post-bac",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "cpe-lyon-fra",
+    "nom_officiel": "CPE Lyon - Chimie Physique Électronique de Lyon",
+    "sigle": "CPE Lyon",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Villeurbanne"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Puissance Alpha - Cursus Ingénieur Post-bac",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "eivp-paris-fra",
+    "nom_officiel": "École des Ingénieurs de la Ville de Paris",
+    "sigle": "EIVP",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "imt-mines-ales-fra",
+    "nom_officiel": "École Nationale Supérieure des Mines d'Alès",
+    "sigle": "IMT Mines Alès",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Alès"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "telecom-nancy-fra",
+    "nom_officiel": "Télécom Nancy - Université de Lorraine",
+    "sigle": "Télécom Nancy",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Villers-lès-Nancy"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "enseirb-matmeca-fra",
+    "nom_officiel": "ENSEIRB-MATMECA - Bordeaux INP",
+    "sigle": "ENSEIRB-MATMECA",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Talence"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "ensai-rennes-fra",
+    "nom_officiel": "École Nationale de la Statistique et de l'Analyse de l'Information",
+    "sigle": "ENSAI",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Bruz"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "institut-optique-fra",
+    "nom_officiel": "Institut d'Optique Graduate School",
+    "sigle": "SupOptique",
+    "type": "ecole",
+    "recrutement": "post_prepa",
+    "pays": "France",
+    "villes": [
+      "Palaiseau"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": null,
+    "parcoursup_annee": null
+  },
+  {
+    "id": "polytech-montpellier-fra",
+    "nom_officiel": "École Polytechnique Universitaire de Montpellier",
+    "sigle": "Polytech Montpellier",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Montpellier"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Geipi Polytech - Cycle Préparatoire Peip",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "icam-nantes-fra",
+    "nom_officiel": "Institut Catholique d'Arts et Métiers",
+    "sigle": "ICAM",
+    "type": "ecole",
+    "recrutement": "post_bac",
+    "pays": "France",
+    "villes": [
+      "Nantes",
+      "Carquefou",
+      "Lille"
+    ],
+    "filieres_cpge": [],
+    "parcoursup_filiere": "Concours Puissance Alpha - Cursus Ingénieur Post-bac",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "jean-baptiste-say-paris-fra",
+    "nom_officiel": "Lycée Jean-Baptiste Say",
+    "sigle": "JB Say",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [
+      "PTSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE PTSI / MPSI Say Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "passy-buzenval-rueil-fra",
+    "nom_officiel": "Lycée Privé Passy-Buzenval",
+    "sigle": "Passy Buzenval",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Rueil-Malmaison"
+    ],
+    "filieres_cpge": [
+      "PTSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE PTSI Passy Buzenval Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "gustave-eiffel-cachan-fra",
+    "nom_officiel": "Lycée Gustave Eiffel",
+    "sigle": "Eiffel Cachan",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Cachan"
+    ],
+    "filieres_cpge": [
+      "PTSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE PTSI Eiffel Cachan Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "ginette-versailles-fra",
+    "nom_officiel": "Lycée Privé Sainte-Geneviève (Ginette)",
+    "sigle": "Ginette",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Versailles"
+    ],
+    "filieres_cpge": [
+      "PTSI",
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "BCPST",
+      "MPI"
+    ],
+    "parcoursup_filiere": "CPGE MPSI / PCSI Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "louis-le-grand-paris-fra",
+    "nom_officiel": "Lycée Louis-le-Grand",
+    "sigle": "LLG",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "MPI"
+    ],
+    "parcoursup_filiere": "CPGE MPSI / PCSI / MP2I Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "henri-iv-paris-fra",
+    "nom_officiel": "Lycée Henri-IV",
+    "sigle": "H4",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "BCPST"
+    ],
+    "parcoursup_filiere": "CPGE MPSI / PCSI Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "stanislas-paris-fra",
+    "nom_officiel": "Collège Stanislas (Stan)",
+    "sigle": "Stanislas",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "MPI"
+    ],
+    "parcoursup_filiere": "CPGE MPSI / PCSI Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "hoche-versailles-fra",
+    "nom_officiel": "Lycée Hoche",
+    "sigle": "Hoche",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Versailles"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "BCPST",
+      "MPI"
+    ],
+    "parcoursup_filiere": "CPGE MPSI / PCSI Hoche Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "le-parc-lyon-fra",
+    "nom_officiel": "Lycée du Parc",
+    "sigle": "Le Parc",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Lyon"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "BCPST",
+      "MPI"
+    ],
+    "parcoursup_filiere": "CPGE MPSI / PCSI Le Parc Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "saint-louis-paris-fra",
+    "nom_officiel": "Lycée Saint-Louis",
+    "sigle": "Saint-Louis",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "BCPST",
+      "MPI"
+    ],
+    "parcoursup_filiere": "CPGE MPSI / PCSI Saint-Louis Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "lazaristes-lyon-fra",
+    "nom_officiel": "Centre Scolaire Aux Lazaristes - La Salle",
+    "sigle": "Lazaristes",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Lyon"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "MPI"
+    ],
+    "parcoursup_filiere": "CPGE MPSI / PCSI Lazaristes Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "pierre-de-fermat-toulouse-fra",
+    "nom_officiel": "Lycée Pierre-de-Fermat",
+    "sigle": "Fermat",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Toulouse"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "BCPST"
+    ],
+    "parcoursup_filiere": "CPGE MPSI / PCSI Fermat Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "blaise-pascal-orsay-fra",
+    "nom_officiel": "Lycée Blaise Pascal",
+    "sigle": "Blaise Pascal",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Orsay"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "MPI"
+    ],
+    "parcoursup_filiere": "CPGE MPSI / PCSI Orsay Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "pasteur-neuilly-fra",
+    "nom_officiel": "Lycée Pasteur",
+    "sigle": "Pasteur",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Neuilly-sur-Seine"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI"
+    ],
+    "parcoursup_filiere": "CPGE MPSI / PCSI Pasteur Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "thiers-marseille-fra",
+    "nom_officiel": "Lycée Thiers",
+    "sigle": "Thiers",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Marseille"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "BCPST"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Thiers Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "champollion-grenoble-fra",
+    "nom_officiel": "Lycée Champollion",
+    "sigle": "Champollion",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Grenoble"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Champollion Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "chaptal-paris-fra",
+    "nom_officiel": "Lycée Chaptal",
+    "sigle": "Chaptal",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [
+      "PTSI",
+      "MPSI",
+      "PCSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Chaptal Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "montaigne-bordeaux-fra",
+    "nom_officiel": "Lycée Montaigne",
+    "sigle": "Montaigne",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Bordeaux"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "BCPST"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Montaigne Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "clemenceau-nantes-fra",
+    "nom_officiel": "Lycée Clemenceau",
+    "sigle": "Clemenceau",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Nantes"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "BCPST"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Clemenceau Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "janson-sailly-paris-fra",
+    "nom_officiel": "Lycée Janson-de-Sailly",
+    "sigle": "Janson",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Janson-de-Sailly Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "fenelon-paris-fra",
+    "nom_officiel": "Lycée Fénelon",
+    "sigle": "Fénelon",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [
+      "MPSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Fénelon Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "michelet-vanves-fra",
+    "nom_officiel": "Lycée Michelet",
+    "sigle": "Michelet",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Vanves"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Michelet Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "condorcet-paris-fra",
+    "nom_officiel": "Lycée Condorcet",
+    "sigle": "Condorcet",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Condorcet Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "faidherbe-lille-fra",
+    "nom_officiel": "Lycée Faidherbe",
+    "sigle": "Faidherbe",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Lille"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Faidherbe Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "descartes-tours-fra",
+    "nom_officiel": "Lycée Descartes",
+    "sigle": "Descartes",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Tours"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Descartes Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "corneille-rouen-fra",
+    "nom_officiel": "Lycée Corneille",
+    "sigle": "Corneille",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Rouen"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Corneille Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "massena-nice-fra",
+    "nom_officiel": "Lycée Masséna",
+    "sigle": "Masséna",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Nice"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Masséna Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "kleber-strasbourg-fra",
+    "nom_officiel": "Lycée Kléber",
+    "sigle": "Kléber",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Strasbourg"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Kléber Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "fabert-metz-fra",
+    "nom_officiel": "Lycée Fabert",
+    "sigle": "Fabert",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Metz"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Fabert Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "carnot-dijon-fra",
+    "nom_officiel": "Lycée Carnot",
+    "sigle": "Carnot Dijon",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Dijon"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Carnot Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "la-martiniere-lyon-fra",
+    "nom_officiel": "Lycée La Martinière Monplaisir",
+    "sigle": "La Martinière",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Lyon"
+    ],
+    "filieres_cpge": [
+      "PTSI",
+      "MPSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée La Martinière Monplaisir Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "chateaubriand-rennes-fra",
+    "nom_officiel": "Lycée Chateaubriand",
+    "sigle": "Chateaubriand",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Rennes"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI",
+      "BCPST"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Chateaubriand Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "berthollet-annecy-fra",
+    "nom_officiel": "Lycée Berthollet",
+    "sigle": "Berthollet",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Annecy"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Berthollet Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "poincare-nancy-fra",
+    "nom_officiel": "Lycée Henri-Poincaré",
+    "sigle": "Poincaré",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Nancy"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Henri-Poincaré Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "lakanal-sceaux-fra",
+    "nom_officiel": "Lycée Lakanal",
+    "sigle": "Lakanal",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Sceaux"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Lakanal Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "charlemagne-paris-fra",
+    "nom_officiel": "Lycée Charlemagne",
+    "sigle": "Charlemagne",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Charlemagne Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "buffon-paris-fra",
+    "nom_officiel": "Lycée Buffon",
+    "sigle": "Buffon",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Buffon Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "sainte-marie-antony-fra",
+    "nom_officiel": "Institution Sainte-Marie",
+    "sigle": "Ste-Marie Antony",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Antony"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Institution Sainte-Marie Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "cezanne-aix-fra",
+    "nom_officiel": "Lycée Paul Cézanne",
+    "sigle": "Cézanne",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Aix-en-Provence"
+    ],
+    "filieres_cpge": [
+      "MPSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Paul Cézanne Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "joffre-montpellier-fra",
+    "nom_officiel": "Lycée Joffre",
+    "sigle": "Joffre",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Montpellier"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Joffre Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "bellevue-toulouse-fra",
+    "nom_officiel": "Lycée Bellevue",
+    "sigle": "Bellevue",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Toulouse"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Bellevue Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "civ-valbonne-fra",
+    "nom_officiel": "Centre International de Valbonne",
+    "sigle": "CIV Sophia",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Valbonne"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Centre International de Valbonne Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "wallon-valenciennes-fra",
+    "nom_officiel": "Lycée Henri-Wallon",
+    "sigle": "Wallon",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Valenciennes"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Henri-Wallon Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "pothier-orleans-fra",
+    "nom_officiel": "Lycée Pothier",
+    "sigle": "Pothier",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Orléans"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Pothier Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "kerichen-brest-fra",
+    "nom_officiel": "Lycée Kérichen",
+    "sigle": "Kérichen",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Brest"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Kérichen Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "camille-guerin-poitiers-fra",
+    "nom_officiel": "Lycée Camille-Guérin",
+    "sigle": "Camille-Guérin",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Poitiers"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Camille-Guérin Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "saint-joseph-toulouse-fra",
+    "nom_officiel": "Lycée Saint-Joseph",
+    "sigle": "St-Joseph Toulouse",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Toulouse"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Saint-Joseph Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "marceau-chartres-fra",
+    "nom_officiel": "Lycée Marceau",
+    "sigle": "Marceau",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Chartres"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Marceau Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "alain-rene-lesage-vannes-fra",
+    "nom_officiel": "Lycée Alain-René Lesage",
+    "sigle": "Lesage Vannes",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Vannes"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Alain-René Lesage Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "saint-francois-xavier-vannes-fra",
+    "nom_officiel": "Lycée Saint-François Xavier",
+    "sigle": "SFX Vannes",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Vannes"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Saint-François Xavier Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "saliege-balma-fra",
+    "nom_officiel": "Institut Saliège",
+    "sigle": "Saliège",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Balma"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Institut Saliège Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "claude-fauriel-saint-etienne-fra",
+    "nom_officiel": "Lycée Claude-Fauriel",
+    "sigle": "Fauriel",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Saint-Étienne"
+    ],
+    "filieres_cpge": [
+      "MPSI",
+      "PCSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Claude-Fauriel Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "montaigne-paris-fra",
+    "nom_officiel": "Lycée Montaigne Paris",
+    "sigle": "Montaigne Paris",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Paris"
+    ],
+    "filieres_cpge": [
+      "MPSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Montaigne Paris Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "ferdinand-buisson-voiron-fra",
+    "nom_officiel": "Lycée Ferdinand Buisson",
+    "sigle": "F. Buisson Voiron",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Voiron"
+    ],
+    "filieres_cpge": [
+      "PTSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Ferdinand Buisson Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "livet-nantes-fra",
+    "nom_officiel": "Lycée Eugène Livet",
+    "sigle": "Livet Nantes",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Nantes"
+    ],
+    "filieres_cpge": [
+      "PTSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Eugène Livet Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "eucalyptus-nice-fra",
+    "nom_officiel": "Lycée Les Eucalyptus",
+    "sigle": "Eucalyptus Nice",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Nice"
+    ],
+    "filieres_cpge": [
+      "PTSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Les Eucalyptus Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "deodat-de-severac-toulouse-fra",
+    "nom_officiel": "Lycée Déodat de Séverac",
+    "sigle": "Déodat Toulouse",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Toulouse"
+    ],
+    "filieres_cpge": [
+      "PTSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Déodat de Séverac Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "baggio-lille-fra",
+    "nom_officiel": "Lycée César Baggio",
+    "sigle": "Baggio Lille",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Lille"
+    ],
+    "filieres_cpge": [
+      "PTSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée César Baggio Parcoursup",
+    "parcoursup_annee": 2024
+  },
+  {
+    "id": "etienne-mimard-saint-etienne-fra",
+    "nom_officiel": "Lycée Étienne Mimard",
+    "sigle": "Mimard",
+    "type": "prepa",
+    "recrutement": null,
+    "pays": "France",
+    "villes": [
+      "Saint-Étienne"
+    ],
+    "filieres_cpge": [
+      "PTSI",
+      "PSI"
+    ],
+    "parcoursup_filiere": "CPGE Scientifique Lycée Étienne Mimard Parcoursup",
+    "parcoursup_annee": 2024
+  }
+]

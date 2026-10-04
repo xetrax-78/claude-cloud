@@ -1,12 +1,14 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense, lazy } from 'react';
 import { 
   Search, SlidersHorizontal, Check, Plus, 
   ExternalLink, BedDouble, ChevronRight, School, RotateCcw,
-  GraduationCap, BookOpen
+  GraduationCap, BookOpen, LayoutGrid, Map as MapIcon
 } from 'lucide-react';
 import { Ecole, DomaineIngenierie, Statut } from '../types';
 
 interface ExplorerViewProps {
+  type: 'ecoles' | 'prepas';
+  onTypeChange: (type: 'ecoles' | 'prepas') => void;
   schools: Ecole[];
   onSelectSchool: (ecole: Ecole) => void;
   onToggleCompare: (ecole: Ecole) => void;
@@ -31,6 +33,8 @@ const ALL_DOMAINS: DomaineIngenierie[] = [
   'Mathématiques Financières & Modélisation',
   'Télécommunications & Réseaux'
 ];
+
+const CampusMap = lazy(() => import('./CampusMap'));
 
 const CPGE_FILIERES = [
   'Toutes les filières',
@@ -59,6 +63,8 @@ const FRENCH_REGIONS = [
 ];
 
 export const ExplorerView: React.FC<ExplorerViewProps> = ({
+  type,
+  onTypeChange,
   schools,
   onSelectSchool,
   onToggleCompare,
@@ -66,7 +72,9 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
   comparedPrepaIds = [],
 }) => {
   // STRICT SEPARATION: Écoles vs Prépas (never mixed!)
-  const [activeTab, setActiveTab] = useState<'ecoles' | 'prepas'>('ecoles');
+  // Type affiché porté par l'URL (?type=prepas) pour que « Retour » depuis une prépa revienne au bon onglet
+  const activeTab = type;
+  const setActiveTab = onTypeChange;
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRegion, setSelectedRegion] = useState<string>('Toutes');
   const [selectedStatut, setSelectedStatut] = useState<Statut | 'Tous'>('Tous');
@@ -80,6 +88,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
   const [onlyInternat, setOnlyInternat] = useState(false);
   
   const [showFilters, setShowFilters] = useState(false);
+  const [display, setDisplay] = useState<'liste' | 'carte'>('liste');
   const [sortBy, setSortBy] = useState<'rang' | 'performance' | 'frais' | 'selectivite'>('rang');
 
   const countEcoles = useMemo(() => schools.filter(s => s.type_etablissement !== 'prepa_cpge').length, [schools]);
@@ -420,7 +429,21 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
             </span>
           )}
         </div>
-        <span className="text-[11px] text-slate-400">Cliquez sur une carte pour ouvrir la fiche dédiée</span>
+        <div role="group" aria-label="Affichage des résultats" className="inline-flex p-0.5 bg-slate-100 rounded-lg">
+          {([['liste', 'Liste', LayoutGrid], ['carte', 'Carte', MapIcon]] as const).map(([value, label, Icon]) => (
+            <button
+              key={value}
+              onClick={() => setDisplay(value)}
+              aria-pressed={display === value}
+              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md font-semibold ${
+                display === value ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>{label}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* 4. Minimalist Clean Cards Grid */}
@@ -435,6 +458,10 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
             Réinitialiser les critères
           </button>
         </div>
+      ) : display === 'carte' ? (
+        <Suspense fallback={<div role="status" className="h-[60vh] grid place-items-center text-sm text-slate-500">Chargement de la carte…</div>}>
+          <CampusMap schools={filteredSchools} />
+        </Suspense>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredSchools.map((ecole) => {
@@ -542,7 +569,7 @@ export const ExplorerView: React.FC<ExplorerViewProps> = ({
                       <div>
                         <span className="block text-[10px] text-slate-400">Top Écoles</span>
                         <strong className="font-mono text-xs font-bold text-emerald-700">
-                          {topPrepa?.taux_integration_top_ecoles || 40}%
+                          {topPrepa?.taux_integration_top_ecoles != null ? `${topPrepa.taux_integration_top_ecoles}%` : '—'}
                         </strong>
                       </div>
                       <div>

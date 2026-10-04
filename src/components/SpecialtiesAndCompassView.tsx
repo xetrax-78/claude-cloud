@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import heroImage from '../assets/images/hero-campus.webp';
 import { usePersistentState } from '../utils/usePersistentState';
+import { analyzeWishlist, printWishlist } from '../utils/wishlist';
 import { 
   Sparkles, SlidersHorizontal, CheckCircle2, AlertCircle, ArrowRight, 
   MapPin, ShieldCheck, GraduationCap, ChevronRight, Filter, RotateCcw,
@@ -229,60 +230,8 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
     return getSelectivityTiers(schools);
   }, [schools]);
 
-  // Audit prédictif du panier de 10 vœux Parcoursup
-  const wishlistAnalysis = useMemo(() => {
-    const wishlistSchools = schools.filter(s => parcoursupWishlist.includes(s.id));
-    let ambitieux = 0;
-    let cibles = 0;
-    let securite = 0;
-
-    wishlistSchools.forEach(s => {
-      const psup = s.admissions.find(a => a.source === 'Parcoursup') || s.admissions[0];
-      const taux = psup?.taux_acces ?? 25;
-      const rang = s.classements[0]?.rang_general ?? 40;
-      if (taux < 15 || rang <= 8) {
-        ambitieux++;
-      } else if (taux <= 32 || rang <= 28) {
-        cibles++;
-      } else {
-        securite++;
-      }
-    });
-
-    const total = wishlistSchools.length;
-    let scoreSecurite = 100;
-    let diagnostic = '';
-    let statusColor = 'text-emerald-800 bg-emerald-50 border-emerald-200';
-
-    if (total === 0) {
-      scoreSecurite = 0;
-      diagnostic = 'Ajoutez jusqu’à 10 vœux pour tester la robustesse de votre stratégie d’admission.';
-      statusColor = 'text-slate-600 bg-slate-50 border-slate-200';
-    } else if (securite === 0 && total >= 3) {
-      scoreSecurite = 45;
-      diagnostic = '⚠️ Risque d’invalidation élevé : aucun vœu de sécurité (taux > 32%). Ajoutez au moins 2 formations de secours.';
-      statusColor = 'text-amber-800 bg-amber-50 border-amber-200';
-    } else if (ambitieux > 5) {
-      scoreSecurite = 55;
-      diagnostic = '⚠️ Trop de vœux ultra-sélectifs (< 15%). Rééquilibrez avec des formations cibles pour maximiser vos chances.';
-      statusColor = 'text-rose-800 bg-rose-50 border-rose-200';
-    } else {
-      scoreSecurite = Math.min(100, Math.round((securite * 25 + cibles * 15 + ambitieux * 10) / total * 5));
-      diagnostic = '✅ Liste équilibrée entre vœux ambitieux, cibles et de sécurité.';
-      statusColor = 'text-emerald-800 bg-emerald-50 border-emerald-200';
-    }
-
-    return {
-      total,
-      ambitieux,
-      cibles,
-      securite,
-      scoreSecurite,
-      diagnostic,
-      statusColor,
-      schools: wishlistSchools
-    };
-  }, [schools, parcoursupWishlist]);
+  // Analyse de l'équilibre de la liste de vœux (logique dans utils/wishlist.ts)
+  const wishlistAnalysis = useMemo(() => analyzeWishlist(schools, parcoursupWishlist), [schools, parcoursupWishlist]);
 
   const applyPreset = (presetName: string) => {
     setQuickKeyword('');
@@ -915,7 +864,7 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-mono font-bold px-3 py-1 bg-slate-900 text-white rounded-lg">
                   {wishlistAnalysis.total} / 10 Vœux
                 </span>
@@ -925,7 +874,16 @@ export const SpecialtiesAndCompassView: React.FC<SpecialtiesAndCompassViewProps>
                     className="px-3 py-1 text-xs font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg border border-indigo-200 flex items-center gap-1.5 transition-colors"
                   >
                     <Share2 className="w-3.5 h-3.5" />
-                    <span>{copyToast ? 'Copié !' : 'Exporter la liste'}</span>
+                    <span>{copyToast ? 'Copié !' : 'Copier la liste'}</span>
+                  </button>
+                )}
+                {wishlistAnalysis.total > 0 && (
+                  <button
+                    onClick={() => printWishlist(wishlistAnalysis)}
+                    className="px-3 py-1 text-xs font-semibold bg-white text-slate-700 hover:bg-slate-50 rounded-lg border border-slate-200 flex items-center gap-1.5 transition-colors"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>PDF / Imprimer</span>
                   </button>
                 )}
               </div>

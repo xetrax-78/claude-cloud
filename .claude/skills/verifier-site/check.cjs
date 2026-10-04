@@ -1,49 +1,90 @@
+// Contrôle navigateur d'IngéFinder (build servi par `vite preview`). Usage : BASE=http://localhost:4174/ node check.cjs
 const { chromium } = require(require('child_process').execSync('npm root -g').toString().trim() + '/playwright');
-const BASE = process.env.BASE || 'http://localhost:4174/';
-require('fs').mkdirSync('shots2', { recursive: true });
+const BASE = (process.env.BASE || 'http://localhost:4174/').replace(/\/$/, '');
+require('fs').mkdirSync('shots', { recursive: true });
+
 (async () => {
   const b = await chromium.launch();
   const errs = [];
-  const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
-  const p = await ctx.newPage();
-  p.on('pageerror', e => errs.push('pageerror: ' + e.message));
-  p.on('console', m => { if (m.type() === 'error' && !/CERT|fonts/.test(m.text())) errs.push(m.text()); });
-  await p.goto(BASE, { waitUntil: 'networkidle' });
+  const watch = (p, tag) => {
+    p.on('pageerror', e => errs.push(`${tag} pageerror: ${e.message}`));
+    p.on('console', m => { if (m.type() === 'error' && !/CERT|tile\.openstreetmap|ERR_TUNNEL|ERR_CONNECTION/.test(m.text())) errs.push(`${tag}: ${m.text()}`); });
+  };
+  const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, colorScheme: 'light' });
+  await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: BASE });
+  const p = await ctx.newPage(); watch(p, 'desk');
+
+  await p.goto(BASE + '/', { waitUntil: 'networkidle' });
   console.log('title', await p.title());
   console.log('hero loaded', await p.$eval('section img', i => i.complete && i.naturalWidth > 0).catch(() => 'noimg'));
-  await p.screenshot({ path: 'shots2/desk-boussole.png' });
-  console.log('compare link initially', JSON.stringify(await p.locator('header nav a', { hasText: 'Comparateur' }).innerText()));
+
   await p.click('header nav >> text=Répertoire'); await p.waitForTimeout(400);
-  console.log('hash', await p.evaluate(() => location.hash), 'title', await p.title());
-  await p.screenshot({ path: 'shots2/desk-repertoire.png' });
+  console.log('url', new URL(p.url()).pathname, 'title', await p.title());
   await p.locator('main button', { hasText: /Comparer/ }).first().click();
   await p.locator('main').getByText('Fiche détaillée').first().click(); await p.waitForTimeout(400);
-  const h = await p.evaluate(() => location.hash);
-  console.log('detail hash', h, 'title', await p.title());
-  await p.screenshot({ path: 'shots2/desk-detail.png' });
+  const detail = new URL(p.url()).pathname;
+  console.log('detail', detail, 'sources', await p.locator('main').getByText(/^Source :/).count());
+  await p.screenshot({ path: 'shots/desk-detail.png' });
   await p.goBack(); await p.waitForTimeout(300);
-  console.log('after back', await p.evaluate(() => location.hash));
-  await p.reload({ waitUntil: 'networkidle' });
-  console.log('compare after reload', JSON.stringify(await p.locator('header nav a', { hasText: 'Comparateur' }).first().innerText()));
-  const p2 = await ctx.newPage();
-  await p2.goto(BASE + h, { waitUntil: 'networkidle' });
+  console.log('after back', new URL(p.url()).pathname);
+
+  // Prépa : Retour revient sur l'onglet prépas
+  await p.goto(BASE + '/repertoire/?type=prepas', { waitUntil: 'networkidle' });
+  await p.locator('main').getByText('Fiche détaillée').first().click(); await p.waitForTimeout(300);
+  await p.locator('main button', { hasText: /Retour/ }).first().click(); await p.waitForTimeout(300);
+  console.log('prepa back', new URL(p.url()).pathname + new URL(p.url()).search);
+
+  // Carte
+  await p.goto(BASE + '/repertoire/', { waitUntil: 'networkidle' });
+  await p.getByRole('button', { name: 'Carte' }).click();
+  await p.waitForSelector('.leaflet-container', { timeout: 10000 });
+  await p.waitForTimeout(500);
+  console.log('map markers', await p.locator('path.leaflet-interactive').count());
+  await p.screenshot({ path: 'shots/desk-map.png' });
+
+  // Lien de comparaison partagé
+  await p.goto(BASE + '/comparateur/', { waitUntil: 'networkidle' });
+  await p.getByRole('button', { name: /Copier le lien/ }).click();
+  const shared = await p.evaluate(() => navigator.clipboard.readText());
+  console.log('share link', shared.replace(BASE, ''));
+  const p3 = await (await b.newContext()).newPage(); watch(p3, 'share');
+  await p3.goto(shared, { waitUntil: 'networkidle' });
+  console.log('shared opens', new URL(p3.url()).pathname, 'badge', JSON.stringify(await p3.locator('header nav a', { hasText: 'Comparateur' }).first().innerText()));
+
+  // Lien direct, ancien lien #/, 404, page pré-rendue sans JS
+  const p2 = await ctx.newPage(); watch(p2, 'deep');
+  await p2.goto(BASE + detail, { waitUntil: 'networkidle' });
   console.log('deeplink h1', await p2.locator('main h1').first().innerText().catch(() => 'none'));
-  await p2.goto(BASE + '#/ecole/nexistepas', { waitUntil: 'networkidle' });
-  console.log('404', JSON.stringify(await p2.locator('main').innerText()));
-  for (const t of ['Comparateur', 'Analytique']) {
-    await p.click(`header nav >> text=${t}`); await p.waitForTimeout(400);
-    await p.screenshot({ path: `shots2/desk-${t}.png` });
-  }
-  const m = await b.newPage({ viewport: { width: 390, height: 844 } });
-  m.on('pageerror', e => errs.push('mob pageerror: ' + e.message));
-  for (const hash of ['', '#/repertoire', '#/comparateur', '#/analytique', h]) {
-    await m.goto(BASE + hash, { waitUntil: 'networkidle' }); await m.waitForTimeout(300);
-    const wide = await m.evaluate(() => {
-      const W = document.documentElement.clientWidth;
-      return [document.documentElement.scrollWidth, [...document.querySelectorAll('main *')].filter(e => e.getBoundingClientRect().right > W + 1).slice(0, 3).map(e => e.tagName + '.' + String(e.className).slice(0, 60))];
-    });
-    console.log('mobile', hash || '#/', JSON.stringify(wide));
-    await m.screenshot({ path: `shots2/mob-${(hash || 'home').replace(/[#/]/g, '_')}.png` });
+  await p2.goto(BASE + '/#/ecole/insa-lyon-fra', { waitUntil: 'networkidle' });
+  console.log('legacy hash →', new URL(p2.url()).pathname);
+  await p2.goto(BASE + '/ecole/nexistepas/', { waitUntil: 'networkidle' });
+  console.log('unknown', JSON.stringify((await p2.locator('main').innerText()).slice(0, 40)));
+  const nojs = await (await b.newContext({ javaScriptEnabled: false })).newPage();
+  await nojs.goto(BASE + detail);
+  console.log('prerender h1', await nojs.locator('h1').first().innerText(), '| jsonld', await nojs.locator('script[type="application/ld+json"]').count());
+
+  // Vœux : export PDF (impression interceptée)
+  await p.goto(BASE + '/', { waitUntil: 'networkidle' });
+  await p.getByRole('button', { name: /Mes vœux Parcoursup/ }).click();
+  await p.locator('main button', { hasText: /^\s*\+|Ajouter/ }).first().click().catch(() => {});
+  const printBtn = p.getByRole('button', { name: /PDF/ });
+  console.log('print button', await printBtn.count());
+
+  // Thème sombre
+  await p.getByRole('button', { name: /thème sombre/ }).first().click();
+  console.log('dark class', await p.evaluate(() => document.documentElement.classList.contains('dark')),
+    'bg', await p.evaluate(() => getComputedStyle(document.body.firstElementChild).backgroundColor));
+  await p.screenshot({ path: 'shots/desk-dark.png' });
+  await p.reload({ waitUntil: 'networkidle' });
+  console.log('dark persists', await p.evaluate(() => document.documentElement.classList.contains('dark')));
+
+  // Mobile : aucun débordement horizontal
+  const m = await (await b.newContext({ viewport: { width: 390, height: 844 } })).newPage(); watch(m, 'mob');
+  for (const path of ['/', '/repertoire/', '/comparateur/', '/analytique/', detail]) {
+    await m.goto(BASE + path, { waitUntil: 'networkidle' }); await m.waitForTimeout(300);
+    const sw = await m.evaluate(() => document.documentElement.scrollWidth);
+    console.log('mobile', path, sw);
+    await m.screenshot({ path: `shots/mob${path.replace(/\//g, '_')}.png` });
   }
   console.log('ERRS', errs);
   await b.close();

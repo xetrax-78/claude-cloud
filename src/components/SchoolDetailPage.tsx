@@ -5,6 +5,7 @@ import {
   Check, Plus, BarChart3, BedDouble, Compass, Globe
 } from 'lucide-react';
 import { Ecole, ClassementMedia } from '../types';
+import { SourceTag, SOURCE_URLS, NON_COMMUNIQUE } from './SourceTag';
 
 interface SchoolDetailPageProps {
   ecole: Ecole;
@@ -35,7 +36,7 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
       ? (ecole.admissions?.find(a => a.source.toLowerCase().includes('cpge') || a.nom_filiere_concours?.toLowerCase().includes('concours') || a.source.toLowerCase().includes('scei')) || ecole.admissions?.[0])
       : (ecole.admissions?.find(a => a.source === 'Parcoursup') || ecole.admissions?.[0]);
 
-  // Admission pathways breakdown (100% authentic per institution model)
+  // Répartition type par modèle de recrutement (ordre de grandeur, identique pour toutes les écoles du même modèle)
   const admissionPaths = isPostPrepa ? [
     { 
       label: 'Concours Nationaux CPGE (MP, PC, PSI, PT, MPI, BCPST)', 
@@ -206,13 +207,8 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
               ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/60'
               : 'bg-blue-50 text-blue-800 border border-blue-200/60'
           }`}>
-            {isPrepa 
-              ? `Classe Préparatoire CPGE · #${ecole.classements?.[0]?.rang_general || 1} National` 
-              : isPostPrepa
-              ? `Grande École Post-Prépa · #${ecole.classements?.[0]?.rang_general || 1} National`
-              : isPostBac
-              ? `École Post-Bac · #${ecole.classements?.[0]?.rang_general || 1} National`
-              : 'Université Internationale'}
+            {(isPrepa ? 'Classe Préparatoire CPGE' : isPostPrepa ? 'Grande École Post-Prépa' : isPostBac ? 'École Post-Bac' : 'Université Internationale')
+              + (!isInternational && ecole.classements?.[0]?.rang_general ? ` · #${ecole.classements[0].rang_general} (${ecole.classements[0].source_media} ${ecole.classements[0].annee})` : '')}
           </span>
           <span aria-hidden="true">·</span>
           <span>{ecole.region || ecole.pays}</span>
@@ -261,9 +257,10 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
             </span>
             <strong className="font-mono text-base font-bold text-slate-900">
               {isPrepa 
-                ? (ecole.internat_disponible ? `Internat (${ecole.prix_internat_annuel || 2400}€)` : 'Sans internat') 
+                ? (ecole.internat_disponible ? (ecole.prix_internat_annuel ? `Internat (${ecole.prix_internat_annuel}€)` : 'Internat') : 'Sans internat') 
                 : `${ecole.insertion.salaire_moyen_embauche} k€`}
             </strong>
+            {!isPrepa && <SourceTag label={ecole.insertion.source ?? 'Enquête insertion, promo'} year={ecole.insertion.annee_promo} url={ecole.insertion.source_url} />}
           </div>
 
           <div className="p-3 bg-slate-50 rounded-lg">
@@ -271,8 +268,9 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
               {isPrepa ? 'Sélectivité Parcoursup' : isPostPrepa ? 'Sélectivité Concours CPGE' : 'Sélectivité Parcoursup'}
             </span>
             <strong className="font-mono text-base font-bold text-indigo-700">
-              {primaryAdmission?.taux_acces ? `${primaryAdmission.taux_acces}%` : 'Sélectif'}
+              {primaryAdmission?.taux_acces != null ? `${primaryAdmission.taux_acces}%` : NON_COMMUNIQUE}
             </strong>
+            {primaryAdmission && <SourceTag label={primaryAdmission.source} year={primaryAdmission.annee} url={primaryAdmission.source_url} />}
           </div>
 
           <div className="p-3 bg-slate-50 rounded-lg">
@@ -281,9 +279,10 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
             </span>
             <strong className="font-mono text-base font-bold text-slate-900">
               {isPrepa 
-                ? `${ecole.prepa_stats?.[0]?.taux_integration_top_ecoles || 45}%` 
+                ? (ecole.prepa_stats?.[0]?.taux_integration_top_ecoles != null ? `${ecole.prepa_stats[0].taux_integration_top_ecoles}%` : NON_COMMUNIQUE)
                 : `${ecole.insertion.taux_emploi_6_mois}%`}
             </strong>
+            {!isPrepa && <SourceTag label={ecole.insertion.source ?? 'Enquête insertion, promo'} year={ecole.insertion.annee_promo} url={ecole.insertion.source_url} />}
           </div>
         </div>
 
@@ -315,8 +314,11 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
                   {primaryAdmission?.nom_filiere_concours || ecole.banque_concours || 'Session officielle'}
                 </p>
               </div>
-              <span className="font-mono text-xs font-bold text-indigo-700 shrink-0">
-                Session {primaryAdmission?.annee || 2024}
+              <span className="shrink-0 text-right">
+                <span className="block font-mono text-xs font-bold text-indigo-700">
+                  {primaryAdmission ? `Session ${primaryAdmission.annee}` : 'Session non communiquée'}
+                </span>
+                {primaryAdmission && <SourceTag label={primaryAdmission.source} url={primaryAdmission.source_url} />}
               </span>
             </div>
 
@@ -327,19 +329,21 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
                   {isPostPrepa ? 'Taux d\'admission concours :' : 'Taux d\'accès Parcoursup :'}
                 </span>
                 <span className="font-mono font-bold text-slate-900">
-                  {primaryAdmission?.taux_acces ? `${primaryAdmission.taux_acces}%` : 'Sélectif'}
+                  {primaryAdmission?.taux_acces != null ? `${primaryAdmission.taux_acces}%` : NON_COMMUNIQUE}
                 </span>
               </div>
               <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div 
                   className={`h-full rounded-full transition-all duration-300 ${
-                    (primaryAdmission?.taux_acces || 50) < 15 
+                    primaryAdmission?.taux_acces == null
+                      ? 'bg-slate-300'
+                      : primaryAdmission.taux_acces < 15 
                       ? 'bg-rose-500' 
-                      : (primaryAdmission?.taux_acces || 50) < 30 
+                      : primaryAdmission.taux_acces < 30 
                       ? 'bg-amber-400' 
                       : 'bg-emerald-500'
                   }`}
-                  style={{ width: `${Math.min(100, Math.max(5, primaryAdmission?.taux_acces || 25))}%` }}
+                  style={{ width: `${Math.min(100, Math.max(primaryAdmission?.taux_acces == null ? 0 : 5, primaryAdmission?.taux_acces ?? 0))}%` }}
                 />
               </div>
             </div>
@@ -348,14 +352,14 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
             <div className="grid grid-cols-2 gap-2 text-xs pt-1">
               <div className="p-2.5 bg-slate-50 rounded-lg">
                 <span className="block text-[10px] text-slate-400">Capacité de la promotion</span>
-                <strong className="font-mono text-sm font-bold text-slate-900">{primaryAdmission?.capacite || 180} places</strong>
+                <strong className="font-mono text-sm font-bold text-slate-900">{primaryAdmission?.capacite ? `${primaryAdmission.capacite} places` : NON_COMMUNIQUE}</strong>
               </div>
               <div className="p-2.5 bg-slate-50 rounded-lg">
                 <span className="block text-[10px] text-slate-400">
                   {isPostPrepa ? 'Candidats au concours' : 'Candidatures reçues'}
                 </span>
                 <strong className="font-mono text-sm font-bold text-indigo-700">
-                  {primaryAdmission?.nb_voeux ? primaryAdmission.nb_voeux.toLocaleString('fr-FR') : '5 200'} {isPostPrepa ? 'inscrits' : 'vœux'}
+                  {primaryAdmission?.nb_voeux ? `${primaryAdmission.nb_voeux.toLocaleString('fr-FR')} ${isPostPrepa ? 'inscrits' : 'vœux'}` : NON_COMMUNIQUE}
                 </strong>
               </div>
             </div>
@@ -364,11 +368,11 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
             <div className="space-y-1 text-xs pt-1 border-t border-slate-100">
               <div className="flex justify-between text-slate-600">
                 <span>Admis Mention Très Bien au Bac :</span>
-                <strong className="font-mono font-bold text-slate-900">{primaryAdmission?.pct_mention_tb || 90}%</strong>
+                <strong className="font-mono font-bold text-slate-900">{primaryAdmission?.pct_mention_tb != null ? `${primaryAdmission.pct_mention_tb}%` : NON_COMMUNIQUE}</strong>
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Part d'étudiants boursiers :</span>
-                <strong className="font-mono font-bold text-slate-900">{primaryAdmission?.pct_boursiers || 15}%</strong>
+                <strong className="font-mono font-bold text-slate-900">{primaryAdmission?.pct_boursiers != null ? `${primaryAdmission.pct_boursiers}%` : NON_COMMUNIQUE}</strong>
               </div>
             </div>
           </div>
@@ -434,8 +438,9 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
                       ? 'Admissions internationales et mobilité'
                       : 'Cycle préparatoire intégré et passerelles Bac+2'}
                   </p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">Répartition type pour ce modèle de recrutement, non spécifique à l'établissement.</p>
                 </div>
-                <span className="text-xs text-slate-400 font-mono">CTI</span>
+                <span className="text-xs text-slate-400 font-mono">Indicatif</span>
               </div>
 
               {/* Stacked bar */}
@@ -483,10 +488,10 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
             <div>
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
                 <Briefcase className="w-3.5 h-3.5 text-indigo-600" />
-                <span>Rémunérations & Perspectives CGE (Enquête Promotion {ecole.insertion.annee_promo})</span>
+                <span>Rémunérations & insertion (promotion {ecole.insertion.annee_promo})</span>
               </h2>
             </div>
-            <span className="text-[11px] font-mono text-slate-400">Source : Conférence des Grandes Écoles</span>
+            <SourceTag label={ecole.insertion.source ?? 'Enquête insertion, promo'} year={ecole.insertion.annee_promo} url={ecole.insertion.source_url} className="text-[11px]" />
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -498,21 +503,21 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
             <div className="p-3 bg-slate-50 rounded-lg">
               <span className="block text-[10px] text-slate-400">Salaire avec primes</span>
               <strong className="font-mono text-base font-bold text-emerald-700">
-                {ecole.insertion.salaire_avec_primes ? `${ecole.insertion.salaire_avec_primes} k€` : `${(ecole.insertion.salaire_moyen_embauche * 1.12).toFixed(1)} k€`}
+                {ecole.insertion.salaire_avec_primes ? `${ecole.insertion.salaire_avec_primes} k€` : NON_COMMUNIQUE}
               </strong>
             </div>
 
             <div className="p-3 bg-slate-50 rounded-lg">
               <span className="block text-[10px] text-slate-400">Salaire après 3 ans d'expérience</span>
               <strong className="font-mono text-base font-bold text-slate-900">
-                {ecole.insertion.salaire_3_ans ? `${ecole.insertion.salaire_3_ans} k€` : `${(ecole.insertion.salaire_moyen_embauche * 1.25).toFixed(1)} k€`}
+                {ecole.insertion.salaire_3_ans ? `${ecole.insertion.salaire_3_ans} k€` : NON_COMMUNIQUE}
               </strong>
             </div>
 
             <div className="p-3 bg-slate-50 rounded-lg">
               <span className="block text-[10px] text-slate-400">Délai moyen de recherche</span>
               <strong className="font-mono text-base font-bold text-indigo-700">
-                {ecole.insertion.duree_moyenne_recherche_mois ? `${ecole.insertion.duree_moyenne_recherche_mois} mois` : '< 1 mois'}
+                {ecole.insertion.duree_moyenne_recherche_mois ? `${ecole.insertion.duree_moyenne_recherche_mois} mois` : NON_COMMUNIQUE}
               </strong>
             </div>
           </div>
@@ -547,7 +552,11 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
             <tbody className="divide-y divide-slate-100">
               {ecole.classements.map((cl) => (
                 <tr key={cl.id} className="hover:bg-slate-50/60 transition-colors">
-                  <td className="py-2.5 px-3 font-bold text-slate-900">{cl.source_media}</td>
+                  <td className="py-2.5 px-3 font-bold text-slate-900">
+                    <a href={cl.source_url ?? SOURCE_URLS[cl.source_media]} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      {cl.source_media}
+                    </a>
+                  </td>
                   <td className="py-2.5 px-3 font-mono text-slate-400">{cl.annee}</td>
                   <td className="py-2.5 px-3 text-slate-700 font-medium">
                     {formatRankingTitle(cl)}
@@ -637,7 +646,7 @@ export const SchoolDetailPage: React.FC<SchoolDetailPageProps> = ({
                 <div className="flex items-center justify-between text-[11px] pt-1 border-t border-slate-50">
                   <span className="text-slate-500">
                     {isPrepa 
-                      ? `${s.prepa_stats?.[0]?.taux_integration_top_ecoles || 35}% Top Écoles` 
+                      ? (s.prepa_stats?.[0]?.taux_integration_top_ecoles != null ? `${s.prepa_stats[0].taux_integration_top_ecoles}% Top Écoles` : '') 
                       : `${s.insertion.salaire_moyen_embauche} k€`}
                   </span>
                   <span className="font-semibold text-indigo-600 hover:underline">Voir la fiche &rarr;</span>

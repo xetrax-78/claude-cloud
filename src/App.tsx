@@ -2,7 +2,7 @@ import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { TopBar } from './components/TopBar';
 import { Ecole } from './types';
 import { usePersistentState } from './utils/usePersistentState';
-import { navigate, schoolHref, tabHref, useHashRoute } from './utils/router';
+import { explorerHref, navigate, schoolHref, tabHref, useRoute } from './utils/router';
 
 // Chaque vue et le jeu de données sont chargés à la demande (bundle initial léger)
 const SpecialtiesAndCompassView = lazy(() => import('./components/SpecialtiesAndCompassView').then(m => ({ default: m.SpecialtiesAndCompassView })));
@@ -18,7 +18,7 @@ const Loading = () => (
 );
 
 export default function App() {
-  const route = useHashRoute();
+  const route = useRoute();
   const [schools, setSchools] = useState<Ecole[] | null>(null);
   const [loadError, setLoadError] = useState(false);
 
@@ -31,6 +31,16 @@ export default function App() {
   // Écoles d'ingénieurs et prépas CPGE sont comparées séparément ; listes conservées entre les visites
   const [comparedSchoolIds, setComparedSchoolIds] = usePersistentState<string[]>('ingefinder.compare.ecoles', []);
   const [comparedPrepaIds, setComparedPrepaIds] = usePersistentState<string[]>('ingefinder.compare.prepas', []);
+
+  // Lien de comparaison partagé : /comparateur/?ecoles=a,b&prepas=c remplace la sélection locale
+  useEffect(() => {
+    if (route.tab !== 'comparator' || !schools) return;
+    const ids = (key: string) => (route.params.get(key) ?? '').split(',').filter(id => schools.some(s => s.id === id)).slice(0, MAX_COMPARED);
+    if (!route.params.has('ecoles') && !route.params.has('prepas')) return;
+    setComparedSchoolIds(ids('ecoles'));
+    setComparedPrepaIds(ids('prepas'));
+    navigate(tabHref('comparator'), { replace: true });
+  }, [route, schools]);
 
   const selectedSchool = useMemo(
     () => (route.schoolId && schools ? schools.find(s => s.id === route.schoolId) ?? null : null),
@@ -83,7 +93,7 @@ export default function App() {
         return selectedSchool ? (
           <SchoolDetailPage
             ecole={selectedSchool}
-            onBack={() => navigate(tabHref('explorer'))}
+            onBack={() => navigate(explorerHref(selectedSchool.type_etablissement === 'prepa_cpge' ? 'prepas' : 'ecoles'))}
             onToggleCompare={handleToggleCompare}
             isCompared={isCurrentPageCompared}
             onSelectOtherSchool={openSchool}
@@ -91,6 +101,8 @@ export default function App() {
           />
         ) : (
           <ExplorerView
+            type={route.explorerType}
+            onTypeChange={(t) => navigate(explorerHref(t), { replace: true })}
             schools={data}
             onSelectSchool={openSchool}
             onToggleCompare={handleToggleCompare}

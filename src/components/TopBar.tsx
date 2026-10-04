@@ -1,6 +1,7 @@
 import React from 'react';
-import { Compass, GraduationCap, Scale, BarChart3, LucideIcon } from 'lucide-react';
+import { Compass, GraduationCap, Scale, BarChart3, Moon, Sun, LucideIcon } from 'lucide-react';
 import { tabHref } from '../utils/router';
+import { useTheme } from '../utils/theme';
 
 export type ActiveTab = 'boussole' | 'explorer' | 'comparator' | 'analytics';
 
@@ -22,6 +23,19 @@ export const TopBar: React.FC<TopBarProps> = ({
   selectedSchoolsCount,
   totalEstablishments,
 }) => {
+  const { theme, toggle } = useTheme();
+
+  const themeButton = (
+    <button
+      onClick={toggle}
+      aria-label={theme === 'dark' ? 'Passer en thème clair' : 'Passer en thème sombre'}
+      title={theme === 'dark' ? 'Thème clair' : 'Thème sombre'}
+      className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+    >
+      {theme === 'dark' ? <Sun className="w-4 h-4" aria-hidden="true" /> : <Moon className="w-4 h-4" aria-hidden="true" />}
+    </button>
+  );
+
   const badge = (tab: ActiveTab) => {
     if (tab === 'explorer' && totalEstablishments) {
       return <span className="text-[11px] font-mono text-slate-400">{totalEstablishments}</span>;
@@ -69,7 +83,9 @@ export const TopBar: React.FC<TopBarProps> = ({
               {badge(tab)}
             </a>
           ))}
+          {themeButton}
         </nav>
+        <div className="sm:hidden">{themeButton}</div>
       </div>
     </header>
 
